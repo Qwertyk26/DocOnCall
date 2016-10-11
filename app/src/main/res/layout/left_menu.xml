@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:orientation="vertical">
+
+        <include
+            layout="@layout/nav_header_main"
+            android:layout_width="match_parent"
+            android:layout_height="250dp" />
+
+        <TextView
+            android:id="@+id/buildVersion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/menuCalls_tv"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/click_background"
+            android:drawableLeft="@drawable/ic_menu_calls"
+            android:drawablePadding="36dp"
+            android:gravity="center_vertical"
+            android:padding="16dp"
+            android:text="@string/calls" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="74dp"
+            android:background="@color/divider" />
+
+
+        <TextView
+            android:id="@+id/menuHistory_tv"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/click_background"
+            android:drawableLeft="@drawable/ic_menu_history"
+            android:drawablePadding="36dp"
+            android:gravity="center_vertical"
+            android:padding="16dp"
+            android:text="@string/history" />
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="74dp"
+            android:background="@color/divider" />
+
+        <TextView
+            android:id="@+id/menuSettings_tv"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/click_background"
+            android:drawableLeft="@drawable/ic_menu_settings"
+            android:drawablePadding="36dp"
+            android:gravity="center_vertical"
+            android:padding="16dp"
+            android:text="@string/settings" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="74dp"
+            android:background="@color/divider" />
+
+        <TextView
+            android:id="@+id/menuAbout_tv"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/click_background"
+            android:drawableLeft="@drawable/ic_menu_info"
+            android:drawablePadding="36dp"
+            android:gravity="center_vertical"
+            android:padding="16dp"
+            android:text="@string/about" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="74dp"
+            android:background="@color/divider" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="74dp"
+            android:layout_marginTop="40dp"
+            android:background="@color/divider" />
+
+        <TextView
+            android:id="@+id/menuLogout_tv"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/click_background"
+            android:drawableLeft="@drawable/ic_menu_exit"
+            android:drawablePadding="36dp"
+            android:gravity="center_vertical"
+            android:padding="16dp"
+            android:text="@string/exit" />
+
+        <View
+
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="74dp"
+            android:background="@color/divider" />
+
+    </LinearLayout>
+
+</ScrollView>
+

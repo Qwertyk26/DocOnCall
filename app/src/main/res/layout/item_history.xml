@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tv_DayHistory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp"
+        android:layout_marginTop="1dp"
+        android:background="@color/background"
+        android:paddingBottom="12dp"
+        android:paddingLeft="16dp"
+        android:paddingTop="12dp"
+        android:text="Сегодня - понедельник, 14.09.2015"
+        android:textColor="@color/selected"
+        android:visibility="gone" />
+
+
+    <LinearLayout
+        android:id="@+id/ll_nameHistory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_DayHistory"
+        android:orientation="horizontal"
+        android:paddingLeft="16dp">
+
+        <TextView
+            android:id="@+id/tv_iconContactHistory"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/round_icon"
+            android:gravity="center"
+            android:textColor="@color/textWhite" />
+
+        <TextView
+            android:id="@+id/tv_nameHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            android:paddingTop="20dp"
+            android:text="М.Н. Клськина"
+            android:textSize="@dimen/textMain" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_timeHistory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/tv_DayHistory"
+        android:layout_toRightOf="@+id/ll_nameHistory"
+        android:gravity="right"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="24dp"
+        android:text="11:30"
+        android:textSize="@dimen/textSmall" />
+
+
+    <TextView
+        android:id="@+id/tv_applicationHistory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_nameHistory"
+        android:paddingBottom="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="8dp"
+        android:paddingTop="8dp"
+        android:text="Заявка 241"
+        android:textColor="@color/selected"
+        android:textSize="@dimen/textSmall" />
+
+    <TextView
+        android:id="@+id/tv_addressHistory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_nameHistory"
+        android:layout_toRightOf="@+id/tv_applicationHistory"
+        android:gravity="right"
+        android:paddingBottom="16dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp"
+        android:text="ул. Ленина, дом 17, кв. 56"
+        android:textColor="@color/selected"
+        android:textSize="@dimen/textSmall" />
+
+
+    <View
+        android:id="@+id/dividerHistory"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/background" />
+
+
+</RelativeLayout>

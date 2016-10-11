@@ -1,0 +1,14 @@
+<ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/viewFlipperCalls"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:inAnimation="@android:anim/fade_in"
+    android:outAnimation="@android:anim/fade_out">
+
+    <include layout="@layout/view_doc_loader" />
+
+    <include layout="@layout/list_calls" />
+
+    <include layout="@layout/view_error_layout" />
+
+</ViewFlipper>

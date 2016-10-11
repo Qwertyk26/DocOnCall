@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </android.support.v4.view.ViewPager>
+    <FrameLayout
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:background="@drawable/ic_take_photo_layout"
+        android:layout_marginBottom="10dp"
+        android:layout_gravity="bottom|center_horizontal">
+
+        <ImageButton
+            android:layout_width="76dp"
+            android:layout_height="76dp"
+            app:srcCompat="@drawable/ic_camera_alt__white_24px"
+            android:background="@drawable/ic_take_photo_back"
+            android:layout_gravity="center_horizontal|center_vertical"/>
+    </FrameLayout>
+
+</FrameLayout>

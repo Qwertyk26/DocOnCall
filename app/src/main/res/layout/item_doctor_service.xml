@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:id="@+id/procedureLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/iblockCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/procedures"
+            android:textStyle="bold"
+            android:textSize="@dimen/textSmall"
+            android:paddingBottom="5dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="2dp">
+            <TextView
+                android:id="@+id/name"
+                android:text="@string/services"
+                android:textSize="@dimen/textXSmall"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:paddingLeft="0dp"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:textSize="@dimen/textXSmall"
+                android:layout_marginLeft="8dp"
+                android:id="@+id/price"
+                android:text="6000р"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,107 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+        classpath 'com.google.gms:google-services:3.0.0'
+    }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'android-apt'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion '24.0.2'
+
+    defaultConfig {
+        applicationId "ru.handh.doctor"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 11
+        versionName "1.0.9"
+        vectorDrawables.useSupportLibrary = true
+    }
+    signingConfigs {
+        release {
+            storeFile file("keystoreDoc.jks")
+            storePassword "qwertyu"
+            keyAlias "DocReliaseKey"
+            keyPassword "qwertyu"
+        }
+    }
+    buildTypes {
+        release {
+            buildConfigField "boolean", "DOCDEBUG", "false"
+            buildConfigField "String", "API_URL", "\"https://doconcall.ru\""
+
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+
+            manifestPlaceholders = [HOCKEYAPP_APP_ID: "b5d6a718e2214388b6b3696740c2704f"]
+        }
+
+        beta {
+            buildConfigField "boolean", "DOCDEBUG", "true"
+            //buildConfigField "String", "API_URL", "\"http://dev.doctoroncall.ru\""
+            buildConfigField "String", "API_URL", "\"http://preproduction.doconcall.ru\""
+
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+
+            manifestPlaceholders = [HOCKEYAPP_APP_ID: "c00575bc5f4b43b6a167d97b106f33ec"]
+        }
+
+        debug {
+            buildConfigField "boolean", "DOCDEBUG", "true"
+            //buildConfigField "String", "API_URL", "\"http://dev.doctoroncall.ru\""
+            buildConfigField "String", "API_URL", "\"http://preproduction.doconcall.ru\""
+
+            manifestPlaceholders = [HOCKEYAPP_APP_ID: "c00575bc5f4b43b6a167d97b106f33ec"]
+        }
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+
+
+
+    lintOptions {
+        abortOnError false
+    }
+}
+repositories {
+    maven {
+        url "https://s3.amazonaws.com/repo.commonsware.com"
+    }
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile files('libs/littlefluffylocationlibrary.jar')
+    testCompile 'junit:junit:4.12'
+    compile 'com.jakewharton:butterknife:8.2.1'
+    apt 'com.jakewharton:butterknife-compiler:8.2.1'
+    compile 'org.greenrobot:eventbus:3.0.0'
+    compile 'net.danlew:android.joda:2.9.4.1'
+    compile 'com.android.support:appcompat-v7:23.4.0'
+    compile 'com.android.support:design:23.4.0'
+    compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.android.support:recyclerview-v7:23.4.0'
+    compile 'com.google.android.gms:play-services-location:8.3.0'
+    compile 'com.google.android.gms:play-services-gcm:8.3.0'
+    compile 'net.hockeyapp.android:HockeySDK:4.0.0'
+    compile 'com.squareup.retrofit:converter-gson:2.0.0-beta2'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'io.realm:realm-android:0.84.1'
+    compile 'org.jsoup:jsoup:1.8.3'
+    compile 'com.android.support:support-vector-drawable:23.4.0'
+    compile 'com.ragnarok.rxcamera:lib:0.0.5'
+    compile 'com.squareup.okhttp3:logging-interceptor:3.2.0'
+}
+apply plugin: 'com.google.gms.google-services'

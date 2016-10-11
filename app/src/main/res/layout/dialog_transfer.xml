@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <include layout="@layout/item_divider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/half_margin">
+
+            <TextView
+                android:id="@+id/type_caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="Тип трансфера"
+                android:textSize="@dimen/textXSmall" />
+
+            <Spinner
+                android:id="@+id/transfer_type"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textSize="@dimen/textXSmall" />
+        </LinearLayout>
+
+        <include layout="@layout/item_divider" android:id="@+id/summ_divider" />
+
+        <LinearLayout
+            android:id="@+id/summ_block"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/half_margin">
+
+            <TextView
+                android:singleLine="true"
+                android:id="@+id/summ_caption"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:text="Стоимость"
+                android:textSize="@dimen/textXSmall" />
+
+            <EditText
+                android:singleLine="true"
+                android:imeOptions="actionNext"
+                android:minWidth="60dp"
+                android:maxWidth="200dp"
+                android:id="@+id/summ"
+                android:inputType="number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textSize="@dimen/textXSmall" />
+            <TextView
+                android:layout_gravity="center_vertical"
+                android:text="Р"
+                android:textSize="@dimen/textXSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <include layout="@layout/item_divider" android:id="@+id/parking_divider" />
+
+        <LinearLayout
+            android:id="@+id/parking_block"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/half_margin">
+
+            <TextView
+                android:singleLine="true"
+                android:id="@+id/parking_caption"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:text="Стоимость платной парковки"
+                android:textSize="@dimen/textXSmall" />
+
+            <EditText
+                android:imeOptions="actionNext"
+                android:inputType="number"
+                android:minWidth="60dp"
+                android:maxWidth="200dp"
+                android:singleLine="true"
+                android:id="@+id/parking"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:textSize="@dimen/textXSmall" />
+            <TextView
+                android:layout_gravity="center_vertical"
+                android:text="Р"
+                android:textSize="@dimen/textXSmall"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <include layout="@layout/item_divider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/half_margin">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:text="Километраж поездки"
+                android:textSize="@dimen/textXSmall" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/km"
+                    android:text="23 км"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textSize="@dimen/textXSmall" />
+                <EditText
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:visibility="invisible"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:textSize="@dimen/textXSmall" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <include layout="@layout/item_divider" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/half_margin">
+
+            <TextView
+                android:singleLine="true"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:text="Время трансфера"
+                android:textSize="@dimen/textXSmall" />
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/time"
+                    android:text="1 час 30 мин."
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:textSize="@dimen/textXSmall" />
+                <EditText
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:visibility="invisible"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:textSize="@dimen/textXSmall" />
+            </RelativeLayout>
+
+        </LinearLayout>
+
+        <include layout="@layout/item_divider" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:paddingTop="@dimen/half_margin"
+            android:paddingLeft="@dimen/half_margin"
+            android:paddingRight="@dimen/half_margin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Комментарий"
+                android:textSize="@dimen/textXSmall" />
+            <EditText
+                android:hint="Если есть что сказать"
+                android:id="@+id/comment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:textSize="@dimen/textXSmall" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_gravity="right"
+            android:orientation="horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/cancel"
+                android:padding="20dp"
+                android:textSize="@dimen/textSmall"
+                android:textColor="@color/colorAccent"
+                android:text="Отмена"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/save"
+                android:padding="20dp"
+                android:textSize="@dimen/textSmall"
+                android:textColor="@color/colorAccent"
+                android:text="Сохранить"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

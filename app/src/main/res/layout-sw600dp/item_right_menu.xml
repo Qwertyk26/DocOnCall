@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="16dp"
+    android:paddingTop="8dp">
+
+
+    <TextView
+        android:layout_marginTop="4dp"
+        android:id="@+id/tv_iconContact"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:layout_marginRight="16dp"
+        android:textColor="@color/textWhite"
+        android:background="@drawable/round_icon" />
+
+    <TextView
+        android:id="@+id/tv_nameRight"
+        android:text="aaaaaaдлоырваыовралыовралыоарылвоарsdfsdfsdf"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:layout_toLeftOf="@+id/tv_numberRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/tv_iconContact"
+        android:textSize="@dimen/textSmall" />
+
+    <TextView
+        android:id="@+id/tv_typeRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_nameRight"
+        android:layout_toRightOf="@id/tv_iconContact"
+        android:text="Новый вызов"
+        android:textColor="@color/selected" />
+
+    <TextView
+        android:id="@+id/tv_numberRight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:text="ЗАявка 123456"
+        android:paddingRight="16dp"
+        android:textColor="@color/selected" />
+
+    <Button
+        android:id="@+id/button_allowRightMenu"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="90dp"
+        android:layout_height="45dp"
+        android:layout_below="@+id/tv_iconContact"
+        android:layout_toRightOf="@+id/tv_iconContact"
+        android:text="@string/allow"
+        android:textColor="@color/colorAccent" />
+
+    <Button
+        android:id="@+id/button_notRightMenu"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="120dp"
+        android:layout_height="45dp"
+        android:layout_below="@+id/tv_iconContact"
+        android:layout_toRightOf="@+id/button_allowRightMenu"
+        android:paddingRight="16dp"
+        android:text="@string/refuse"
+        android:textColor="@color/selected" />
+
+    <View
+        android:id="@+id/dividetRightMenu"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="56dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/dividerDark" />
+
+</RelativeLayout>

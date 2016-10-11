@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/vItemCalls"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/iv_iconCalls"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/round_icon"
+        android:gravity="center"
+        android:textColor="@color/textWhite" />
+
+
+    <TextView
+        android:id="@+id/tv_nameCalls"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/iv_iconCalls"
+        android:paddingTop="12dp"
+        android:text="ФИО"
+        android:textSize="@dimen/textSmall" />
+
+    <TextView
+        android:id="@+id/tv_numberCalls"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_nameCalls"
+        android:layout_toRightOf="@id/iv_iconCalls"
+        android:paddingBottom="16dp"
+        android:text="ЗАявка 123"
+        android:textColor="@color/selected" />
+
+    <TextView
+        android:id="@+id/tv_timeCalls"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:paddingRight="16dp"
+        android:paddingTop="12dp"
+        android:text="18.30" />
+
+    <TextView
+        android:id="@+id/tv_addressCalls"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/tv_numberCalls"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/tv_timeCalls"
+        android:layout_toRightOf="@+id/tv_numberCalls"
+        android:gravity="right"
+        android:paddingBottom="4dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="16dp"
+        android:text="ул. Суслова, дом 44, кв55"
+        android:textColor="@color/selected" />
+
+
+    <View
+        android:id="@+id/deviderItemCalls"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="56dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/dividerDark" />
+
+
+</RelativeLayout>

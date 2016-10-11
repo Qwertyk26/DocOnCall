@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="1dp"
+    android:background="@color/background"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:paddingLeft="48dp"
+    android:paddingRight="48dp">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Сегодня — понедельник, 14.09.2015"
+        android:textColor="@color/selected"
+        android:textSize="@dimen/textSmall" />
+
+</LinearLayout>

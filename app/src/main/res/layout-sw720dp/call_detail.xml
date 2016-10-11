@@ -1,0 +1,215 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+        <RelativeLayout
+            android:id="@+id/rlDetailCurrentCall"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp">
+
+
+            <TextView
+                android:id="@+id/tv_writePatientCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/writePatientCard"
+                android:textSize="@dimen/textMainBig"
+                android:visibility="gone" />
+
+            <RelativeLayout
+                android:id="@+id/rlCurrentCall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_writePatientCard"
+                android:orientation="horizontal">
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+
+                    android:layout_toLeftOf="@+id/closeCall_button"
+                    android:text="@string/currentCall"
+                    android:textSize="@dimen/textMainBig" />
+
+                <Button
+                    android:id="@+id/closeCall_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:paddingLeft="30dp"
+                    android:paddingRight="30dp"
+                    android:text="Завершить"
+                    android:textColor="@color/textWhite" />
+
+            </RelativeLayout>
+
+
+            <TextView
+                android:id="@+id/callClientName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rlCurrentCall"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:paddingTop="40dp"
+                android:text="Мария Николаевна Коськина"
+                android:textSize="@dimen/textBig" />
+
+            <TextView
+                android:id="@+id/callClientBirthday"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/callClientName"
+                android:layout_centerHorizontal="true"
+                android:paddingTop="6dp"
+                android:text="Дата рождения 20.08.1990"
+                android:textColor="@color/selected"
+                android:textSize="@dimen/textSmall" />
+
+
+            <LinearLayout
+                android:id="@+id/llCallTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/callClientBirthday"
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal"
+                android:paddingTop="24dp">
+
+                <TextView
+                    android:id="@+id/callTime1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    android:background="@drawable/call_time_background"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:text="1"
+                    android:textColor="@color/textWhite"
+                    android:textSize="@dimen/textExtraLargeTime" />
+
+                <TextView
+                    android:id="@+id/callTime2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    android:layout_toRightOf="@+id/callTime1"
+                    android:background="@drawable/call_time_background"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:text="2"
+                    android:textColor="@color/textWhite"
+                    android:textSize="@dimen/textExtraLargeTime" />
+
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginTop="27dp"
+                    android:background="@drawable/time_points" />
+
+                <TextView
+                    android:id="@+id/callTime3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    android:background="@drawable/call_time_background"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:text="3"
+                    android:textColor="@color/textWhite"
+                    android:textSize="@dimen/textExtraLargeTime" />
+
+                <TextView
+                    android:id="@+id/callTime4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="1dp"
+                    android:background="@drawable/call_time_background"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:text="0"
+                    android:textColor="@color/textWhite"
+                    android:textSize="@dimen/textExtraLargeTime" />
+
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/callClientAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/llCallTime"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:paddingTop="24dp"
+                android:text="ул. Ленина, дом 17, корпус 43, стр. 89, подъезд 4, этаж 2, кв. "
+                android:textSize="@dimen/textSmall" />
+
+
+            <TextView
+                android:id="@+id/callClientIntercom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/callClientAddress"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:paddingTop="12dp"
+                android:text="Код домофона: 754584"
+                android:textSize="@dimen/textSmall" />
+
+            <TextView
+                android:id="@+id/callClientPhone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/callClientIntercom"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:text="Телефон: 754584"
+                android:textSize="@dimen/textSmall" />
+
+            <Button
+                android:id="@+id/showMap_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/callClientIntercom"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:text="Показать на карте"
+                android:textColor="@color/textWhite" />
+
+            <Button
+                android:id="@+id/getDirection_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/showMap_button"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="20dp"
+                android:layout_marginTop="8dp"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:text="Проложить маршрут"
+                android:textColor="@color/textWhite" />
+
+
+        </RelativeLayout>
+
+</ScrollView>
+
+

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_calls"
+            android:icon="@android:drawable/ic_menu_camera"
+            android:title="Вызовы" />
+        <item
+            android:id="@+id/nav_history_calls"
+            android:icon="@android:drawable/ic_menu_gallery"
+            android:title="История вызовов" />
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@android:drawable/ic_menu_slideshow"
+            android:title="Профиль" />
+    </group>
+
+    <!--<item android:title="Действия">-->
+    <item android:title="">
+        <menu>
+            <item
+                android:id="@+id/app_logout"
+                android:icon="@android:drawable/ic_menu_send"
+                android:title="Выйти" />
+        </menu>
+    </item>
+
+</menu>

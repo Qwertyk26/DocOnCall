@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_centerInParent="true"
+    android:background="@drawable/background_content_settings">
+
+
+    <ImageView
+        android:id="@+id/settingPhoto_iv"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="2dp"
+        android:padding="2dp"
+        android:scaleType="centerCrop"
+        />
+
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="170dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="8dp"
+        android:src="@drawable/ic_ok_settings" />
+
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/settingsName_tip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/settingPhoto_iv"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="36dp"
+        android:layout_marginRight="36dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center">
+
+        <EditText
+            android:id="@+id/settingsName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:hint="Имя"
+            android:inputType="text"
+            android:maxLines="1"
+            android:singleLine="true" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/settingsName_tip"
+        android:layout_marginBottom="30dp"
+        android:layout_marginLeft="36dp"
+        android:layout_marginRight="36dp">
+
+        <EditText
+            android:id="@+id/settingsSurname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:hint="Фамилия"
+            android:inputType="text"
+            android:maxLines="1"
+            android:singleLine="true" />
+
+    </android.support.design.widget.TextInputLayout>
+
+
+</RelativeLayout>
