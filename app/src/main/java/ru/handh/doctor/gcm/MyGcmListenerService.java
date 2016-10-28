@@ -14,6 +14,7 @@ import com.google.android.gms.gcm.GcmListenerService;
 import ru.handh.doctor.R;
 import ru.handh.doctor.ui.main.MainActivity;
 import ru.handh.doctor.utils.Constants;
+import ru.handh.doctor.utils.Log4jHelper;
 import ru.handh.doctor.utils.SharedPref;
 
 /**
@@ -21,7 +22,8 @@ import ru.handh.doctor.utils.SharedPref;
  * слушатель приходящих пушек
  */
 public class MyGcmListenerService extends GcmListenerService {
-
+    private static String TAG = "MyGcmListenerService";
+    org.apache.log4j.Logger log;
     /**
      * @param from SenderID of the sender.
      * @param data Data bundle containing message data as key/value pairs.
@@ -30,7 +32,9 @@ public class MyGcmListenerService extends GcmListenerService {
     // [START receive_message]
     @Override
     public void onMessageReceived(String from, Bundle data) {
+        log = Log4jHelper.getLogger(TAG);
         String message = data.getString("message");
+        log.info(TAG + " push notification received");
 //        Log.d(TAG, "From: " + from);
 //        Log.d(TAG, "Message: " + message);
 

@@ -3,6 +3,7 @@ package ru.handh.doctor.ui.dialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -23,6 +24,7 @@ import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
+import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,14 +36,16 @@ import ru.handh.doctor.R;
 import ru.handh.doctor.event.TransferInfoEvent;
 import ru.handh.doctor.io.network.responce.Transfer;
 import ru.handh.doctor.model.Reference;
+import ru.handh.doctor.utils.Log4jHelper;
 
 /**
  * Created by samsonov on 29.07.2016.
  */
 public class TransferDialogFragment extends DialogFragment {
-
+    public final static String TAG = "TransferDialogFragment";
     private static final String KEY_TRANSFER = "TRANSFER";
     private static final String KEY_TYPES = "TRANSFER_TYPES";
+    org.apache.log4j.Logger log;
 
     public TransferDialogFragment() {}
 
@@ -51,7 +55,7 @@ public class TransferDialogFragment extends DialogFragment {
         if(transfer != null && types != null && types.size() > 0) {
             Bundle bundle = new Bundle();
             bundle.putParcelable(KEY_TRANSFER, transfer);
-            bundle.putParcelableArrayList(KEY_TYPES, types);
+            bundle.putParcelableArrayList(KEY_TYPES, (ArrayList<? extends Parcelable>) Parcels.wrap(types));
             fragment.setArguments(bundle);
         }
         return fragment;
@@ -94,15 +98,16 @@ public class TransferDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        log = Log4jHelper.getLogger(TAG);
         if(getArguments()!=null) {
             transfer = getArguments().getParcelable(KEY_TRANSFER);
-            types = getArguments().getParcelableArrayList(KEY_TYPES);
+            types = Parcels.unwrap((Parcelable) getArguments().getParcelableArrayList(KEY_TYPES));
         }
 
         if(savedInstanceState!=null) {
             Transfer transfer = savedInstanceState.getParcelable(KEY_TRANSFER);
             if(transfer!=null) this.transfer = transfer;
-            types = savedInstanceState.getParcelableArrayList(KEY_TYPES);
+            types = (ArrayList<Reference>) Parcels.wrap(savedInstanceState.getParcelableArrayList(KEY_TYPES));
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -116,7 +121,7 @@ public class TransferDialogFragment extends DialogFragment {
                @Override
                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                    Reference reference = adapter.getItem(position);
-
+                    log.info(TAG + " item selected " + position);
                    summ_block.setVisibility(reference.isTaxi()?LinearLayout.VISIBLE:LinearLayout.GONE);
                    summ_divider.setVisibility(reference.isTaxi()?View.VISIBLE:View.GONE);
 
@@ -155,6 +160,7 @@ public class TransferDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 dismiss();
+                log.info(TAG + " cancel clicked");
             }
         });
 
@@ -165,6 +171,7 @@ public class TransferDialogFragment extends DialogFragment {
                 if(selected>=0) {
                     onSubmit(adapter.getItem(selected));
                 }
+                log.info(TAG + " save clicked");
             }
         });
 
@@ -176,7 +183,7 @@ public class TransferDialogFragment extends DialogFragment {
                 WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-
+        log.info(TAG + " created");
         return dialog;
     }
 

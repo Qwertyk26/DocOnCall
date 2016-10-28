@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
@@ -17,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -28,16 +30,18 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import ru.handh.doctor.R;
 import ru.handh.doctor.event.RedirectionInfoEvent;
-import ru.handh.doctor.model.DoctorReference;
 import ru.handh.doctor.model.Reference;
+import ru.handh.doctor.utils.Log4jHelper;
 
 /**
  * Created by samsonov on 04.08.2016.
  */
 public class RedirectionDialogFragment extends DialogFragment {
 
+    public final static String TAG = "RedirectionDialogFragment";
     private static final String KEY_DOCTORS = "DOCTORS";
     private static final String KEY_CONSENTS = "CONSENTS";
+    org.apache.log4j.Logger log;
 
     public static RedirectionDialogFragment newInstance(ArrayList<Reference> doctorList, ArrayList<Reference> consentList) {
         RedirectionDialogFragment fragment = new RedirectionDialogFragment();
@@ -80,6 +84,7 @@ public class RedirectionDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        log = Log4jHelper.getLogger(TAG);
         Bundle b = savedInstanceState;
         if(b==null) b = getArguments();
         if(b!=null) {
@@ -121,7 +126,7 @@ public class RedirectionDialogFragment extends DialogFragment {
 
         builder.setTitle("Перенаправления")
                 .setView(rootView);
-
+        log.info(TAG + " created");
         return builder.create();
     }
 
@@ -178,10 +183,13 @@ public class RedirectionDialogFragment extends DialogFragment {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     Reference doctorRef = doctors.get(position);
+                    log.info(TAG + " spinner item selected " + position);
                     boolean writable = doctorRef.getCustomProperties() == null || doctorRef.getCustomProperties().isWritable();
                     List<Reference> references = new ArrayList<>();
                     for(Reference reference : consents) {
-                        if(writable==(reference.getCustomProperties()==null || reference.getCustomProperties().isWritable())) references.add(reference);
+                        if (writable == (reference.getCustomProperties()== null || reference.getCustomProperties().isWritable())) {
+                            references.add(reference);
+                        }
                     }
 
                     consent.setAdapter(new ConsentSpinnerAdapter(getContext(), references));
@@ -198,7 +206,7 @@ public class RedirectionDialogFragment extends DialogFragment {
                     if(contains>=0) {
                         consent.setSelection(contains);
                     } else {
-                        if(consent.getSelectedItemPosition()>=0) {
+                        if(consent.getSelectedItemPosition() >= 0) {
                             Reference conRef;
                             if(consent.getSelectedItemPosition() < consent.getCount()) {
                                 conRef = (Reference) consent.getAdapter().getItem(consent.getSelectedItemPosition());
@@ -220,6 +228,7 @@ public class RedirectionDialogFragment extends DialogFragment {
             consent.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    log.info(TAG + " spinner item selected " + position);
                     Pair<Reference, Reference> newPair = new Pair<>(doctors.get(doctor.getSelectedItemPosition()), (Reference) consent.getAdapter().getItem(consent.getSelectedItemPosition()));
                     resultList.set(pPosition, newPair);
                 }
@@ -245,9 +254,15 @@ public class RedirectionDialogFragment extends DialogFragment {
             super(context, R.layout.item_type, R.id.text, doctors);
         }
 
+        @NonNull
         @Override
-        public Reference getItem(int position) {
-            return new DoctorReference(super.getItem(position));
+        public View getView(int position, View convertView, ViewGroup parent) {
+            Reference reference = getItem(position);
+            if (convertView == null) {
+                convertView  = LayoutInflater.from(getContext()).inflate(R.layout.item_type, null);
+                ((TextView)convertView.findViewById(R.id.text)).setText(reference.getValue());
+            }
+            return convertView;
         }
     }
 

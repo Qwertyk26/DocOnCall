@@ -20,10 +20,11 @@
         android:layout_below="@+id/subtitle"
         android:layout_above="@+id/buttons_layout"
         android:background="@android:color/black">
-        <TextureView
-            android:layout_width="wrap_content"
+        <com.commonsware.cwac.camera.CameraView
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/preview_surface"/>
+            android:id="@+id/preview_surface"
+            android:layout_gravity="center_vertical"/>
         <RelativeLayout
             android:layout_width="96dp"
             android:layout_height="96dp"

@@ -46,6 +46,7 @@ import ru.handh.doctor.ui.main.MainActivity;
 import ru.handh.doctor.utils.Constants;
 import ru.handh.doctor.utils.GeofenceErrorMessages;
 import ru.handh.doctor.utils.Log;
+import ru.handh.doctor.utils.Log4jHelper;
 import ru.handh.doctor.utils.SharedPref;
 
 /**
@@ -55,7 +56,7 @@ import ru.handh.doctor.utils.SharedPref;
 public class GeoService extends Service implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, LocationListener,
         ResultCallback<Status> {
-
+    public final static String TAG = "GeoService";
     public final static int RADIUS_BIG = 3000;
     public final static int RADIUS_SMALL = 1000;
     public final static int RADIUS_END = 0;
@@ -78,6 +79,7 @@ public class GeoService extends Service implements GoogleApiClient.ConnectionCal
     private PendingIntent mGeofencePendingIntent;
     private SharedPreferences mSharedPreferences;
     private boolean mGeofencesAdded;
+    org.apache.log4j.Logger log;
 
     @Nullable
     @Override
@@ -88,7 +90,7 @@ public class GeoService extends Service implements GoogleApiClient.ConnectionCal
     @Override
     public void onCreate() {
         super.onCreate();
-
+        log = Log4jHelper.getLogger(TAG);
         brGeo = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -140,7 +142,7 @@ public class GeoService extends Service implements GoogleApiClient.ConnectionCal
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         mGoogleApiClient.connect();
-        Log.d("start");
+        log.info(TAG + " start");
         callMini = SharedPref.getCallDataMini(this);
         locationClient.setLatitude(callMini.getLat());
         locationClient.setLongitude(callMini.getLon());
@@ -198,14 +200,14 @@ public class GeoService extends Service implements GoogleApiClient.ConnectionCal
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d("Connection failed: ConnectionResult.getErrorCode() = " + connectionResult.getErrorCode());
+        log.info(TAG + " Connection failed: ConnectionResult.getErrorCode() = " + connectionResult.getErrorCode());
     }
 
     /**
      * отправка координат
      */
     private void sendCoordinates() {
-        Log.d("координаты lat: " + mCurrentLocation.getLatitude() + ", lon: " + mCurrentLocation.getLongitude());
+        log.info(TAG + " координаты lat: " + mCurrentLocation.getLatitude() + ", lon: " + mCurrentLocation.getLongitude());
         CoordinatesSend coordSend = new CoordinatesSend(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude(), this);
 
         Call<ModelCoordinates> call = ApiInstance.restApi.getCoordinates(SharedPref.getTokenApp(this), coordSend);
@@ -232,7 +234,7 @@ public class GeoService extends Service implements GoogleApiClient.ConnectionCal
 
             @Override
             public void onFailure(Throwable t) {
-                Log.d("координаты не отправлены ошибка сети");
+                log.error(TAG + " координаты не отправлены ошибка сети");
             }
         });
     }
@@ -255,7 +257,7 @@ public class GeoService extends Service implements GoogleApiClient.ConnectionCal
     public void onLocationChanged(Location location) {
         mCurrentLocation = location;
         sendCoordinates();
-        Log.d("местоположение обновлено");
+        log.info(TAG + " местоположение обновлено");
         updateCoordinatesInMain(mCurrentLocation);
     }
 
@@ -317,7 +319,7 @@ public class GeoService extends Service implements GoogleApiClient.ConnectionCal
 
 
     private void logSecurityException(SecurityException securityException) {
-        Log.d("GEO Invalid location permission. " +
+        log.info(TAG + " GEO Invalid location permission. " +
                 "You need to use ACCESS_FINE_LOCATION with geofences " + securityException);
     }
 
@@ -377,7 +379,7 @@ public class GeoService extends Service implements GoogleApiClient.ConnectionCal
             editor.apply();
         } else {
             String errorMessage = GeofenceErrorMessages.getErrorString(this, status.getStatusCode());
-            Log.e(errorMessage);
+            log.error(TAG + errorMessage);
         }
     }
 

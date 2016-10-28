@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swipe"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/textWhite"
+        android:orientation="vertical">
+<android.support.v7.widget.RecyclerView
+    android:id="@+id/rvChats"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+</android.support.v7.widget.RecyclerView>
+    <TextView
+        android:id="@+id/empty_Chats"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:text="@string/emptyChats"
+        android:visibility="gone" />
+    </LinearLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

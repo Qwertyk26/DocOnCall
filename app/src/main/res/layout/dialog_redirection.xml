@@ -8,7 +8,8 @@
         android:id="@+id/list_view"
         android:layout_width="match_parent"
         android:layout_weight="1"
-        android:layout_height="0dp"/>
+        android:layout_height="0dp"
+        android:divider="@null"/>
 
     <LinearLayout
         android:layout_gravity="right"
@@ -18,17 +19,19 @@
         <TextView
             android:id="@+id/cancel"
             android:padding="20dp"
-            android:textSize="@dimen/textSmall"
-            android:textColor="@color/colorAccent"
+
+            android:textColor="@color/selected"
             android:text="Отмена"
+            android:textAllCaps="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/save"
             android:padding="20dp"
-            android:textSize="@dimen/textSmall"
+
             android:textColor="@color/colorAccent"
             android:text="Сохранить"
+            android:textAllCaps="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>

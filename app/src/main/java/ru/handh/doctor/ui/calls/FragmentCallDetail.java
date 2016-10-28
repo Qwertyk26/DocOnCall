@@ -6,6 +6,7 @@ import android.content.ActivityNotFoundException;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,9 +29,12 @@ import android.widget.ViewFlipper;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.parceler.Parcels;
 
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.BindView;
@@ -49,6 +53,7 @@ import ru.handh.doctor.event.TransferInfoEvent;
 import ru.handh.doctor.gcm.DeleteNotUploadedImagesService;
 import ru.handh.doctor.io.network.ApiInstance;
 import ru.handh.doctor.io.network.CallUpdateChecker;
+import ru.handh.doctor.io.network.RestApi;
 import ru.handh.doctor.io.network.responce.ModelCallStatus;
 import ru.handh.doctor.io.network.responce.DefaultResponse;
 import ru.handh.doctor.io.network.responce.Transfer;
@@ -58,15 +63,16 @@ import ru.handh.doctor.io.network.send.CallStatusSend;
 import ru.handh.doctor.model.RedirectionPost;
 import ru.handh.doctor.model.RedirectionShort;
 import ru.handh.doctor.model.Reference;
+import ru.handh.doctor.model.ReferenceListResponse;
 import ru.handh.doctor.model.ReferenceResponse;
 import ru.handh.doctor.model.TransferListResponse;
 import ru.handh.doctor.model.TransferPost;
 import ru.handh.doctor.ui.ParentFragment;
 import ru.handh.doctor.ui.dialog.RedirectionDialogFragment;
-import ru.handh.doctor.ui.dialog.TakePhotoDialogFragment;
 import ru.handh.doctor.ui.dialog.TransferDialogFragment;
 import ru.handh.doctor.ui.main.MainActivity;
 import ru.handh.doctor.utils.Constants;
+import ru.handh.doctor.utils.Log4jHelper;
 import ru.handh.doctor.utils.SharedPref;
 import ru.handh.doctor.utils.Utils;
 
@@ -89,19 +95,20 @@ public class FragmentCallDetail extends ParentFragment {
     private String sendStatus;
     private String lastStatus = "";
     private Button statusChangeButton;
+    private ImageButton takePhoto;
     private MainActivity ma = (MainActivity) getActivity();
     private AlertDialog locationDialog;
-    private TakePhotoDialogFragment takePhotoDialogFragment;
     Intent deleteNotUploadedImages;
+    org.apache.log4j.Logger log;
 
     private View.OnClickListener buttonClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
             double latitude = call.getAddress().getLatitude();
             double longitude = call.getAddress().getLongitude();
             switch (v.getId()) {
                 case R.id.closeCall_button:
+                    log.info(FRAGMENT_TAG + " closeCall_button clicked");
                     if(lastStatus.equals(Constants.STATUS_CALL_ASSIGNED_M)) {
                         EventBus.getDefault().post(new ForceCordsSendEvent());
                     }
@@ -112,9 +119,13 @@ public class FragmentCallDetail extends ParentFragment {
                     if(!SharedPref.getIsNurse(getContext()) && lastStatus.equals(Constants.STATUS_CALL_COMPLETE_D)) {
                         openRedirectionDialog(false);
                     } else if (SharedPref.getIsNurse(getContext()) && lastStatus.equals(Constants.STATUS_CALL_ARRIVED_I)) {
-                        takePhotoDialogFragment = TakePhotoDialogFragment.newInstance(call.getIdCall(), SharedPref.getTokenUser(getContext()));
-                        takePhotoDialogFragment.setTargetFragment(FragmentCallDetail.this, 1);
-                        takePhotoDialogFragment.show(getFragmentManager(), "TakePhoto");
+                        Intent mIntent = new Intent(ma, ActivityTakePhoto.class);
+                        mIntent.putExtra("idCall", call.getIdCall());
+                        mIntent.putExtra("tokenUser", SharedPref.getTokenUser(getContext()));
+                        ma.startActivity(mIntent);
+                        //takePhotoDialogFragment = TakePhotoDialogFragment.newInstance(call.getIdCall(), SharedPref.getTokenUser(getContext()));
+                        //takePhotoDialogFragment.setTargetFragment(FragmentCallDetail.this, 1);
+                        //takePhotoDialogFragment.show(getFragmentManager(), "TakePhoto");
                     } else {
                         changeStatus();
                     }
@@ -122,6 +133,7 @@ public class FragmentCallDetail extends ParentFragment {
                     break;
 
                 case R.id.showMap_button:
+                    log.info(FRAGMENT_TAG + " showMap_button clicked");
                     String label = getActivity().getString(R.string.sick);
                     String uriBegin = "geo:" + latitude + "," + longitude;
                     String query = latitude + "," + longitude + "(" + label + ")";
@@ -132,7 +144,7 @@ public class FragmentCallDetail extends ParentFragment {
                     try {
                         getActivity().startActivity(intent);
                     } catch (ActivityNotFoundException e) {
-                        Toast.makeText(ma, "У вас нет приложения-карт", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "У вас нет приложения-карт", Toast.LENGTH_SHORT).show();
                     }
 
                     break;
@@ -141,7 +153,7 @@ public class FragmentCallDetail extends ParentFragment {
 
                     double latCurrent = 0;
                     double lonCurrent = 0;
-
+                    log.info(FRAGMENT_TAG + " getDirection_button clicked");
                     if (((MainActivity) getActivity()).currentLocation != null) {
                         latCurrent = ((MainActivity) getActivity()).currentLocation.lastLat;
                         lonCurrent = ((MainActivity) getActivity()).currentLocation.lastLong;
@@ -165,10 +177,15 @@ public class FragmentCallDetail extends ParentFragment {
     private View.OnClickListener takePhotoClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            log.info(FRAGMENT_TAG + " takePhotoButton clicked");
             if (SharedPref.getIsNurse(getContext())) {
-                takePhotoDialogFragment = TakePhotoDialogFragment.newInstance(call.getIdCall(), SharedPref.getTokenUser(getContext()));
-                takePhotoDialogFragment.setTargetFragment(FragmentCallDetail.this, 1);
-                takePhotoDialogFragment.show(getFragmentManager(), "TakePhoto");
+                Intent mIntent = new Intent(ma, ActivityTakePhoto.class);
+                mIntent.putExtra("idCall", call.getIdCall());
+                mIntent.putExtra("tokenUser", SharedPref.getTokenUser(getContext()));
+                getActivity().startActivity(mIntent);
+                //takePhotoDialogFragment = TakePhotoDialogFragment.newInstance(call.getIdCall(), SharedPref.getTokenUser(getContext()));
+                //takePhotoDialogFragment.setTargetFragment(FragmentCallDetail.this, 1);
+                //takePhotoDialogFragment.show(getFragmentManager(), "TakePhoto");
             }
         }
     };
@@ -180,25 +197,29 @@ public class FragmentCallDetail extends ParentFragment {
         switch (lastStatus) {
             case Constants.STATUS_CALL_ASSIGNED_M:
                 sendStatus = Constants.STATUS_CALL_START_C;
-                Toast.makeText(ma, "Выезжаю на вызов", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Выезжаю на вызов", Toast.LENGTH_SHORT).show();
+                log.info(FRAGMENT_TAG + " status changed from " + Constants.STATUS_CALL_ASSIGNED_M);
                 break;
             case Constants.STATUS_CALL_START_C:
                 sendStatus = Constants.STATUS_CALL_ARRIVED_I;
-                Toast.makeText(ma, "Подъезжаю к больному", Toast.LENGTH_SHORT).show();
+                log.info(FRAGMENT_TAG + " status changed from " + Constants.STATUS_CALL_START_C);
+                Toast.makeText(getActivity(), "Подъезжаю к больному", Toast.LENGTH_SHORT).show();
                 break;
             case Constants.STATUS_CALL_ARRIVED_I:
                 sendStatus = Constants.STATUS_CALL_COMPLETE_D;
-                Toast.makeText(ma, "Приехал", Toast.LENGTH_SHORT).show();
+                log.info(FRAGMENT_TAG + " status changed from " + Constants.STATUS_CALL_ARRIVED_I);
+                Toast.makeText(getActivity(), "Приехал", Toast.LENGTH_SHORT).show();
                 //if (SharedPref.getIsNurse(getContext())) {
                 //    takePhoto.setVisibility(View.GONE);
                 //}
                 break;
             case Constants.STATUS_CALL_COMPLETE_D:
                 sendStatus = Constants.STATUS_CALL_END_CLIENT_E;
-                Toast.makeText(ma, "Завершил вызов", Toast.LENGTH_SHORT).show();
+                log.info(FRAGMENT_TAG + " status changed from " + Constants.STATUS_CALL_COMPLETE_D);
+                Toast.makeText(getActivity(), "Завершил вызов", Toast.LENGTH_SHORT).show();
                 break;
             default:
-                Toast.makeText(ma, "Отправился к больному", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Отправился к больному", Toast.LENGTH_SHORT).show();
         }
         callStatusReq(sendStatus);
     }
@@ -217,7 +238,7 @@ public class FragmentCallDetail extends ParentFragment {
     }
 
     public static void newInstance(DataCall data, final boolean isHaveSelect, final InstanceCreatedCallback callback) {
-        if(data==null) {
+        if(data == null) {
             callback.onUpdate(createFragment(null, isHaveSelect));
         } else {
             CallUpdateChecker.checkIfUpdated(data, new CallUpdateChecker.UpdateCallback() {
@@ -234,9 +255,7 @@ public class FragmentCallDetail extends ParentFragment {
         super.onCreate(savedInstanceState);
         call = getArguments().getParcelable("data");
         isHaveSelect = getArguments().getBoolean("isHaveSelect");
-        //for (int i = 0; i < call.getServiceList().size(); i++) {
-        //    Log.d("Service", call.getServiceList().get(i).getIblockCode());
-        //}
+        log = Log4jHelper.getLogger(FRAGMENT_TAG);
     }
 
     @BindView(R.id.call_id) TextView callId;
@@ -271,7 +290,6 @@ public class FragmentCallDetail extends ParentFragment {
 
     @BindView(R.id.sicklist_layout) ViewGroup sicklistLayout;
     @BindView(R.id.scroll_view) ScrollView scrollView;
-    @BindView(R.id.take_photo_btn) ImageButton takePhoto;
     private Unbinder unbinder;
 
     @Override
@@ -293,6 +311,7 @@ public class FragmentCallDetail extends ParentFragment {
         unbinder = ButterKnife.bind(this, rootView);
 
         statusChangeButton = (Button) rootView.findViewById(R.id.closeCall_button);
+        takePhoto = (ImageButton) rootView.findViewById(R.id.take_photo_btn);
 
         updateFields();
 
@@ -307,6 +326,7 @@ public class FragmentCallDetail extends ParentFragment {
             @Override
             public void onClick(View v) {
                 callStatusReq(sendStatus);
+                log.info(FRAGMENT_TAG + " button_reqError clicked");
             }
         });
 
@@ -469,7 +489,7 @@ public class FragmentCallDetail extends ParentFragment {
                             startActivity(intent);
                         } catch (ActivityNotFoundException e) {
                             e.printStackTrace();
-                            Toast.makeText(ma, "Ваше устройство не может звонить", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Ваше устройство не может звонить", Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -645,7 +665,7 @@ public class FragmentCallDetail extends ParentFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
+        log.info(FRAGMENT_TAG + " destroyed");
         if(locationDialog!=null) locationDialog.dismiss();
         if(unbinder!=null) unbinder.unbind();
 
@@ -684,9 +704,11 @@ public class FragmentCallDetail extends ParentFragment {
                         EventBus.getDefault().post(new ForceCordsSendEvent());
                         openTransferDialog(false, null);
                     } else if (lastStatus.equals(Constants.STATUS_CALL_COMPLETE_D)) {
-                        deleteNotUploadedImages = new Intent(ma, DeleteNotUploadedImagesService.class);
-                        deleteNotUploadedImages.putExtra("idCall", call.getIdCall());
-                        ma.startService(deleteNotUploadedImages);
+                        if (ma != null) {
+                            deleteNotUploadedImages = new Intent(ma, DeleteNotUploadedImagesService.class);
+                            deleteNotUploadedImages.putExtra("idCall", call.getIdCall());
+                            ma.startService(deleteNotUploadedImages);
+                        }
                     }
                     setTextButton(callStatus);
                     lastStatus = callStatus;
@@ -706,7 +728,9 @@ public class FragmentCallDetail extends ParentFragment {
                 checkForUpdate(true);
 
                 viewFlipper.setDisplayedChild(Constants.VIEW_CONTENT);
-                Toast.makeText(ma, R.string.statusNotChanged, Toast.LENGTH_SHORT).show();
+                if (ma != null) {
+                    Toast.makeText(getActivity(), R.string.statusNotChanged, Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -759,25 +783,28 @@ public class FragmentCallDetail extends ParentFragment {
                 break;
             case Constants.STATUS_CALL_END_CLIENT_E:
                 statusChangeButton.setVisibility(View.GONE);
+                if (SharedPref.getIsNurse(getContext())) {
+                    takePhoto.setVisibility(View.GONE);
+                }
                 break;
         }
     }
 
     private void openTransferDialog(final boolean error, final Transfer pTransfer) {
         showProgress();
-        Call<ReferenceResponse> transferTypeCall = ApiInstance.restApi.getReference(SharedPref.getTokenApp(getContext()), "transferType");
+        Call<ReferenceResponse> transferTypeCall = ApiInstance.defaultService(RestApi.class).getReference(SharedPref.getTokenApp(getContext()), "transferType");
         transferTypeCall.enqueue(new Callback<ReferenceResponse>() {
             @Override
             public void onResponse(final Response<ReferenceResponse> refResponse, Retrofit retrofit) {
                 if(!refResponse.isSuccess()) {
                     showData();
-                    Toast.makeText(ma, "Ошибка при получении трансфера. Повторите позднее", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Ошибка при получении трансфера. Повторите позднее", Toast.LENGTH_SHORT).show();
                 } else {
                     if(error) {
                         showData();
-                        Toast.makeText(ma, "Ошибка при отправке трансфера. Повторите позднее", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Ошибка при отправке трансфера. Повторите позднее", Toast.LENGTH_SHORT).show();
                     }
-                    Call<TransferListResponse> transferList = ApiInstance.restApi.getTransferList(SharedPref.getTokenApp(getContext()), SharedPref.getTokenUser(getContext()), call.getIdCall());
+                    Call<TransferListResponse> transferList = ApiInstance.defaultService(RestApi.class).getTransferList(SharedPref.getTokenApp(getContext()), SharedPref.getTokenUser(getContext()), call.getIdCall());
                     transferList.enqueue(new Callback<TransferListResponse>() {
                         @Override
                         public void onResponse(Response<TransferListResponse> response, Retrofit retrofit) {
@@ -803,7 +830,7 @@ public class FragmentCallDetail extends ParentFragment {
                                 showData();
                             } else {
                                 showData();
-                                Toast.makeText(ma, "Ошибка при получении трансфера. Повторите позднее", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "Ошибка при получении трансфера. Повторите позднее", Toast.LENGTH_SHORT).show();
                             }
                         }
 
@@ -811,7 +838,7 @@ public class FragmentCallDetail extends ParentFragment {
                         public void onFailure(Throwable t) {
                             showData();
                             t.printStackTrace();
-                            Toast.makeText(ma, "Ошибка при получении трансфера. Повторите позднее", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Ошибка при получении трансфера. Повторите позднее", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }
@@ -821,7 +848,7 @@ public class FragmentCallDetail extends ParentFragment {
             public void onFailure(Throwable t) {
                 t.printStackTrace();
                 showData();
-                Toast.makeText(ma, "Ошибка при получении трансфера. Повторите позднее", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Ошибка при получении трансфера. Повторите позднее", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -835,13 +862,13 @@ public class FragmentCallDetail extends ParentFragment {
             code = "redirectionSpecialistChild";
         }
         showProgress();
-        Call<ReferenceResponse> doctorsCall = ApiInstance.restApi.getReference(SharedPref.getTokenApp(getContext()), code);
+        Call<ReferenceResponse> doctorsCall = ApiInstance.defaultService(RestApi.class).getReference(SharedPref.getTokenApp(getContext()), code);
         doctorsCall.enqueue(new Callback<ReferenceResponse>() {
             @Override
             public void onResponse(Response<ReferenceResponse> response, Retrofit retrofit) {
                 if(response.isSuccess()) {
                     final ArrayList<Reference> doctors = new ArrayList<>(response.body().getData());
-                    Call<ReferenceResponse> consentCall = ApiInstance.restApi.getReference(SharedPref.getTokenApp(getContext()), "redirectionConsentToRecord");
+                    Call<ReferenceResponse> consentCall = ApiInstance.defaultService(RestApi.class).getReference(SharedPref.getTokenApp(getContext()), "redirectionConsentToRecord");
                     consentCall.enqueue(new Callback<ReferenceResponse>() {
                         @Override
                         public void onResponse(Response<ReferenceResponse> response, Retrofit retrofit) {
@@ -879,12 +906,12 @@ public class FragmentCallDetail extends ParentFragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onEvent(final TransferInfoEvent e) {
         showProgress();
-        Call<ReferenceResponse> routeTypeCall = ApiInstance.restApi.getReference(SharedPref.getTokenApp(getContext()), "transferRoute");
+        Call<ReferenceResponse> routeTypeCall = ApiInstance.defaultService(RestApi.class).getReference(SharedPref.getTokenApp(getContext()), "transferRoute");
         routeTypeCall.enqueue(new Callback<ReferenceResponse>() {
             @Override
             public void onResponse(Response<ReferenceResponse> response, Retrofit retrofit) {
                 if(!response.isSuccess()) {
-                    Toast.makeText(ma, "Данные трансфера могли не сохраниться, пожалуйста, проверьте в ЭКВ", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Данные трансфера могли не сохраниться, пожалуйста, проверьте в ЭКВ", Toast.LENGTH_SHORT).show();
                     //openTransferDialog(true, e.getTransfer());
                 } else {
                     Reference r = response.body().getData().get(0);
@@ -893,16 +920,16 @@ public class FragmentCallDetail extends ParentFragment {
 
                     e.getTransfer().setToken(SharedPref.getTokenUser(getContext()));
                     final TransferPost p = new TransferPost(SharedPref.getTokenUser(getContext()), e.getTransfer());
-                    Call<TransferPost> call = ApiInstance.restApi.postStatus(SharedPref.getTokenApp(getContext()), p);
+                    Call<TransferPost> call = ApiInstance.defaultService(RestApi.class).postStatus(SharedPref.getTokenApp(getContext()), p);
                     call.enqueue(new Callback<TransferPost>() {
                         @Override
                         public void onResponse(Response<TransferPost> response, Retrofit retrofit) {
                             showData();
                             if(!response.isSuccess()) {
-                                Toast.makeText(ma, "Данные трансфера могли не сохраниться, пожалуйста, проверьте в ЭКВ", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "Данные трансфера могли не сохраниться, пожалуйста, проверьте в ЭКВ", Toast.LENGTH_SHORT).show();
                                 //openTransferDialog(true, p.getTransfer());
                             } else {
-                                Toast.makeText(ma, "Данные трансфера успешно сохранены", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "Данные трансфера успешно сохранены", Toast.LENGTH_SHORT).show();
                                 //changeStatus();
                             }
                         }
@@ -911,7 +938,7 @@ public class FragmentCallDetail extends ParentFragment {
                         public void onFailure(Throwable t) {
                             t.printStackTrace();
                             showData();
-                            Toast.makeText(ma, "Данные трансфера могли не сохраниться, пожалуйста, проверьте в ЭКВ", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Данные трансфера могли не сохраниться, пожалуйста, проверьте в ЭКВ", Toast.LENGTH_SHORT).show();
                             //openTransferDialog(true, p.getTransfer());
                         }
                     });
@@ -922,7 +949,7 @@ public class FragmentCallDetail extends ParentFragment {
             public void onFailure(Throwable t) {
                 showData();
                 t.printStackTrace();
-                Toast.makeText(ma, "Данные трансфера могли не сохраниться, пожалуйста, проверьте в ЭКВ", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Данные трансфера могли не сохраниться, пожалуйста, проверьте в ЭКВ", Toast.LENGTH_SHORT).show();
                 //openTransferDialog(true, e.getTransfer());
             }
         });
@@ -964,7 +991,7 @@ public class FragmentCallDetail extends ParentFragment {
             changeStatus();
         } else {
             RedirectionPost post = new RedirectionPost(SharedPref.getTokenUser(getContext()), redirections.get(0));
-            Call<DefaultResponse> redirectionPost = ApiInstance.restApi.postRedirection(SharedPref.getTokenApp(getContext()), post);
+            Call<DefaultResponse> redirectionPost = ApiInstance.defaultService(RestApi.class).postRedirection(SharedPref.getTokenApp(getContext()), post);
             redirectionPost.enqueue(new Callback<DefaultResponse>() {
                 @Override
                 public void onResponse(Response<DefaultResponse> response, Retrofit retrofit) {
@@ -974,7 +1001,7 @@ public class FragmentCallDetail extends ParentFragment {
                     } else {
                         redirections.remove(0);
                         sendRedirections(redirections);
-                        //Toast.makeText(getContext(), "Ошибка при отправке списка перенаправлений. Повторите позднее", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Ошибка при отправке списка перенаправлений. Повторите позднее", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -983,7 +1010,7 @@ public class FragmentCallDetail extends ParentFragment {
                     redirections.remove(0);
                     sendRedirections(redirections);
                     t.printStackTrace();
-                    //Toast.makeText(getContext(), "Ошибка при отправке списка перенаправлений. Повторите позднее", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Ошибка при отправке списка перенаправлений. Повторите позднее", Toast.LENGTH_SHORT).show();
                 }
             });
         }

@@ -1,6 +1,8 @@
 package ru.handh.doctor.ui.calls;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -32,6 +34,7 @@ import ru.handh.doctor.ui.main.CallsOnResponce;
 import ru.handh.doctor.ui.main.MainActivity;
 import ru.handh.doctor.utils.Constants;
 import ru.handh.doctor.utils.Log;
+import ru.handh.doctor.utils.Log4jHelper;
 import ru.handh.doctor.utils.SharedPref;
 import ru.handh.doctor.utils.Utils;
 
@@ -48,7 +51,7 @@ public class FragmentCallsStart extends ParentFragment implements FragmentCallLi
     private ReqForCalls rc;
     private boolean isHaveSelect;
     private boolean loading = false;
-
+    org.apache.log4j.Logger log;
     public static SwipeRefreshLayout swipeRefreshLayout;
 
     public FragmentCallsStart() {
@@ -61,6 +64,7 @@ public class FragmentCallsStart extends ParentFragment implements FragmentCallLi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        log = Log4jHelper.getLogger(FRAGMENT_TAG);
         this.setRetainInstance(true);
     }
 
@@ -136,6 +140,7 @@ public class FragmentCallsStart extends ParentFragment implements FragmentCallLi
      */
     @Override
     public void onItemSelected(String id) {
+        log.info(FRAGMENT_TAG + " item selected " + id);
         int selectedID = Integer.valueOf(id) - 1;
 
         if(!loading) {
@@ -174,7 +179,7 @@ public class FragmentCallsStart extends ParentFragment implements FragmentCallLi
                         if(getFragmentManager()!=null) getFragmentManager().beginTransaction()
                                 .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in,
                                         android.R.anim.fade_out)
-                                .add(R.id.container, fragment).addToBackStack(FragmentCallDetail.FRAGMENT_TAG).commit();
+                                .add(R.id.container, fragment).addToBackStack(FragmentCallDetail.FRAGMENT_TAG).commitAllowingStateLoss();
                         loading = false;
                     }
                 });
@@ -189,6 +194,7 @@ public class FragmentCallsStart extends ParentFragment implements FragmentCallLi
     private void refresh() {
         if(swipeRefreshLayout!=null) swipeRefreshLayout.setRefreshing(true);
         if(getActivity()!=null) ((MainActivity) getActivity()).loadNewCalls();
+        log.info(FRAGMENT_TAG + " swipeRefreshLayout refreshed");
     }
 
     public void loadActiveOnlyCalls() {
@@ -206,7 +212,7 @@ public class FragmentCallsStart extends ParentFragment implements FragmentCallLi
             _dDataCall.setIdPatient(8701);
             _dDataCall.setFio("Иванов Иван Иванович");
             _dDataCall.setPatientBirthday("25.06.2014");
-            _dDataCall.setStatusCall(Constants.STATUS_CALL_ARRIVED_I);
+            _dDataCall.setStatusCall(Constants.STATUS_CALL_COMPLETE_D);
             Address address = new Address();
             address.setLatitude(Double.parseDouble("55.776406"));
             address.setLongitude(Double.parseDouble("37.676915"));
@@ -248,17 +254,18 @@ public class FragmentCallsStart extends ParentFragment implements FragmentCallLi
                         cdm.setLon(dataCall.get(i).getAddress().getLongitude());
 
                         SharedPref.setCallDataMini(cdm, getActivity());
-                        ((MainActivity) getActivity()).startLocationService();
+                        if (((MainActivity) getActivity()) != null) {
+                            ((MainActivity) getActivity()).startLocationService();
+                        }
                     }
                     break;
                 }
-
             }
 
             FragmentCallList fragmentCallList = (FragmentCallList) getChildFragmentManager().findFragmentById(R.id.item_list);
-            if (dataCall != null)
+            if (dataCall != null && fragmentCallList != null) {
                 fragmentCallList.setActivateOnItemClick(true, dataCall);
-
+            }
         } else {
             Utils.showErrorMessage(response, getActivity(), retrofit);
         }

@@ -39,18 +39,18 @@ public class CallUpdateChecker {
             callback.onUpdate(null, false);
             return;
         }
-        Call<ModelLastUpdated> call = ApiInstance.restApi.getLastModified(SharedPref.getTokenApp(MyApplication.appContext), String.valueOf(pDataCall.getIdCall()));
+        Call<ModelLastUpdated> call = ApiInstance.defaultService(RestApi.class).getLastModified(SharedPref.getTokenApp(MyApplication.appContext), String.valueOf(pDataCall.getIdCall()));
         call.enqueue(new Callback<ModelLastUpdated>() {
             @Override
             public void onResponse(Response<ModelLastUpdated> response, Retrofit retrofit) {
-                if (response.body() != null && response.body().getData() != null && response.body().getData().size() > 0) {
+                if (response != null && response.body() != null && response.body().getData() != null && response.body().getData().size() > 0) {
                     final String data = response.body().getData().get(0);
                     String mapData = dataMap.get(pDataCall.getIdCall());
                     boolean needsUpdate = data != null && mapData != null && !data.equals(mapData);
                     Log.d(TAG, "onResponse: CHECK SUCCESSFUL. needs update = " + needsUpdate);
                     if (needsUpdate || force) {
                         CallsSend callsSend = new CallsSend(SharedPref.getTokenUser(MyApplication.appContext), isActive, isNew);
-                        Call<ModelCallsReq> calls = ApiInstance.restApi.getCalls(SharedPref.getTokenApp(MyApplication.appContext), callsSend);
+                        Call<ModelCallsReq> calls = ApiInstance.defaultService(RestApi.class).getCalls(SharedPref.getTokenApp(MyApplication.appContext), callsSend);
                         calls.enqueue(new Callback<ModelCallsReq>() {
                             @Override
                             public void onResponse(Response<ModelCallsReq> response, Retrofit retrofit) {

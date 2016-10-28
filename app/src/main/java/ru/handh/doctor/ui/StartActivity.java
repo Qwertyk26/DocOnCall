@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -23,6 +24,7 @@ import net.hockeyapp.android.utils.Util;
 import ru.handh.doctor.VersionChecker;
 import ru.handh.doctor.ui.main.MainActivity;
 import ru.handh.doctor.utils.Log;
+import ru.handh.doctor.utils.Log4jHelper;
 import ru.handh.doctor.utils.SharedPref;
 import ru.handh.doctor.utils.Utils;
 
@@ -31,17 +33,20 @@ import ru.handh.doctor.utils.Utils;
  * стартовое активити с выбором экрана
  */
 public class StartActivity extends AppCompatActivity {
-
+    public final static String TAG = "StartActivity";
     private int PERMISSION_REQUEST_CODE = 1;
-
+    org.apache.log4j.Logger log;
     private boolean destroyed;
+    private static final String[] REQUEST_PERMISSIONS = new String[] {
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         destroyed = false;
-
         CrashManager.register(this, Util.getAppIdentifier(this), new CrashManagerListener() {
             @Override
             public boolean shouldAutoUploadCrashes() {
@@ -54,6 +59,7 @@ public class StartActivity extends AppCompatActivity {
             public void onComplete(boolean needUpdate, String newVersion) {
                 if(!destroyed) {
                     if(needUpdate) {
+                        log.info(TAG + " dialog update showing");
                         new AlertDialog.Builder(StartActivity.this)
                                 .setTitle("Необходимо обновление")
                                 .setMessage("Доступная новая версия приложения. Необходимо установить её из Google Play.")
@@ -61,6 +67,7 @@ public class StartActivity extends AppCompatActivity {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         String appPackageName = getPackageName();
+                                        log.info(TAG + " go to google play clicked");
                                         try {
                                             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
                                         } catch (android.content.ActivityNotFoundException anfe) {
@@ -73,14 +80,16 @@ public class StartActivity extends AppCompatActivity {
                                     @Override
                                     public void onDismiss(DialogInterface dialog) {
                                         finish();
+                                        log.info(TAG + " update dialog dismiss");
                                     }
                                 })
                                 .show();
                     } else {
-                        if(ContextCompat.checkSelfPermission(StartActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)== PackageManager.PERMISSION_GRANTED) {
-                            openStartActivity();
-                        } else {
+                        if (!checkPermission()) {
                             requestPermission();
+                        } else {
+                            openStartActivity();
+                            log = Log4jHelper.getLogger(TAG);
                         }
                     }
                 }
@@ -91,14 +100,21 @@ public class StartActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         destroyed = true;
-
         super.onDestroy();
     }
-
+    private boolean checkPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+        for (String permission : REQUEST_PERMISSIONS) {
+            if (ActivityCompat.checkSelfPermission(StartActivity.this, permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
     private void requestPermission() {
-        ActivityCompat.requestPermissions(this,
-                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                PERMISSION_REQUEST_CODE);
+        ActivityCompat.requestPermissions(StartActivity.this, REQUEST_PERMISSIONS, PERMISSION_REQUEST_CODE);
     }
 
     public void openStartActivity() {
@@ -122,14 +138,16 @@ public class StartActivity extends AppCompatActivity {
             LocationLibrary.initialiseLibrary(getBaseContext(), "ru.handh.doctor");
         }
         catch (UnsupportedOperationException ex) {
-            Log.d("UnsupportedOperationException thrown - the device doesn't have any location providers");
+            log.debug(TAG + " UnsupportedOperationException thrown - the device doesn't have any location providers");
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        log = Log4jHelper.getLogger(TAG);
         if(requestCode==PERMISSION_REQUEST_CODE) {
-            if(grantResults.length > 0 && grantResults[0]==PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED
+                    && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
                 openStartActivity();
             } else {
                 if(ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[0])) {
@@ -140,6 +158,7 @@ public class StartActivity extends AppCompatActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     requestPermission();
+                                    log.info(TAG + "dialog permission repeat clicked");
                                     dialog.dismiss();
                                 }
                             })
@@ -150,6 +169,7 @@ public class StartActivity extends AppCompatActivity {
                                 }
                             })
                             .show();
+                    log.info(TAG + "dialog permission location showing");
                 } else {
                     new AlertDialog.Builder(this)
                             .setTitle("Ошибка")
@@ -161,6 +181,7 @@ public class StartActivity extends AppCompatActivity {
                                 }
                             })
                             .show();
+                    log.info(TAG + "dialog permission location error");
                 }
             }
         }

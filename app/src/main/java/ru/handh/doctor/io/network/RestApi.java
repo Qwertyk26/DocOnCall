@@ -13,11 +13,13 @@ import ru.handh.doctor.io.network.responce.ModelAuth;
 import ru.handh.doctor.io.network.responce.ModelCallGet;
 import ru.handh.doctor.io.network.responce.ModelCallImage;
 import ru.handh.doctor.io.network.responce.ModelCallStatus;
+import ru.handh.doctor.io.network.responce.ModelChatList;
 import ru.handh.doctor.io.network.responce.ModelConfig;
 import ru.handh.doctor.io.network.responce.ModelCoordinates;
 import ru.handh.doctor.io.network.responce.ModelDoctor;
 import ru.handh.doctor.io.network.responce.ModelLastUpdated;
 import ru.handh.doctor.io.network.responce.ModelLogout;
+import ru.handh.doctor.io.network.responce.ModelMessage;
 import ru.handh.doctor.io.network.responce.ModelSessionStatus;
 import ru.handh.doctor.io.network.responce.ModelStatus;
 import ru.handh.doctor.io.network.responce.DefaultResponse;
@@ -112,5 +114,11 @@ public interface RestApi {
 
     @POST("/api/doctor/call/image")
     Call<ModelCallImage> uploadImages(@Header("token") String tokenApp, @Body CallImagePost image);
+
+    @GET("/api/chat/list")
+    Call<ModelChatList> getChatList(@Header("token") String tokenApp, @Query("token") String tokenUser, @Query("isOpened") boolean isOpened);
+
+    @GET("/api/chat/message/get-list")
+    Call<ModelMessage> getMessageList(@Header("token") String tokenApp, @Query("isNew") boolean isNew, @Query("isOpened") boolean isOpened, @Query("orderId") int orderId, @Query("chatId") int chatId);
 }
 

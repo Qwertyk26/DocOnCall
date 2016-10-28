@@ -55,6 +55,7 @@ import ru.handh.doctor.io.network.responce.ModelDoctor;
 import ru.handh.doctor.io.network.send.SettingsNameSend;
 import ru.handh.doctor.ui.controls.CustomMapView;
 import ru.handh.doctor.ui.main.MainActivity;
+import ru.handh.doctor.utils.Log4jHelper;
 import ru.handh.doctor.utils.SharedPref;
 import ru.handh.doctor.utils.Utils;
 
@@ -67,6 +68,7 @@ public class FragmentSettings extends ParentFragment implements MainActivity.Cli
     private Handler handler = new Handler(Looper.myLooper());
 
     public final static String FRAGMENT_TAG = "FragmentSettings";
+    org.apache.log4j.Logger log;
     private final Pattern sPattern
             = Pattern.compile("^([a-z,A-Z,а-я,А-Я,\\s,\\-,']{0,25})?([0-9]?)?$");
     private EditText name, middleName, surname, nameEdit, middleNameEdit, surnameEdit, city, street, house;
@@ -90,12 +92,14 @@ public class FragmentSettings extends ParentFragment implements MainActivity.Cli
         @Override
         public void onClick(View v) {
             enableEditing();
+            log.info(FRAGMENT_TAG + " enable editing clicked");
         }
     };
     private View.OnClickListener cancelEditing = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             undoEditing();
+            log.info(FRAGMENT_TAG + " undo editing clicked");
         }
     };
 
@@ -103,6 +107,7 @@ public class FragmentSettings extends ParentFragment implements MainActivity.Cli
         @Override
         public void onClick(View v) {
             saveInfo();
+            log.info(FRAGMENT_TAG + " save info clicked");
         }
     };
 
@@ -140,7 +145,7 @@ public class FragmentSettings extends ParentFragment implements MainActivity.Cli
         editFieldsLayout = rootView.findViewById(R.id.edit_fields_layout);
         mapView = (CustomMapView) rootView.findViewById(R.id.mapView);
         viewFlipper = (ViewFlipper) rootView.findViewById(R.id.viewFlipperSettings);
-
+        log = Log4jHelper.getLogger(FRAGMENT_TAG);
         isEditing = savedInstanceState != null && savedInstanceState.getBoolean("isEditing");
 
         setUpMap(savedInstanceState);
@@ -158,7 +163,7 @@ public class FragmentSettings extends ParentFragment implements MainActivity.Cli
                     positionMarker.setPosition(latLng);
                     CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 16);
                     map.animateCamera(cameraUpdate);
-
+                    log.info(FRAGMENT_TAG + " mylocationButton clicked");
                     getAddress(positionMarker.getPosition().latitude, positionMarker.getPosition().longitude);
                 }
             }
@@ -441,6 +446,7 @@ public class FragmentSettings extends ParentFragment implements MainActivity.Cli
             @Override
             public void onMarkerDragEnd(Marker marker) {
                 getAddress(marker.getPosition().latitude, marker.getPosition().longitude);
+                log.info(FRAGMENT_TAG + " marker map end draging");
             }
         });
     }

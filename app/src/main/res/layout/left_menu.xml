@@ -38,7 +38,21 @@
             android:layout_height="1dp"
             android:layout_marginLeft="74dp"
             android:background="@color/divider" />
-
+        <TextView
+            android:id="@+id/menuChats_tv"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/click_background"
+            android:drawablePadding="36dp"
+            android:gravity="center_vertical"
+            android:padding="16dp"
+            android:drawableLeft="@drawable/ic_message_black"
+            android:text="@string/messages"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="74dp"
+            android:background="@color/divider" />
 
         <TextView
             android:id="@+id/menuHistory_tv"

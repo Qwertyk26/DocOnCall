@@ -2,10 +2,8 @@ package ru.handh.doctor;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Environment;
 
-import com.littlefluffytoys.littlefluffylocationlibrary.LocationLibrary;
-
-import ru.handh.doctor.utils.Log;
 
 
 /**
@@ -20,7 +18,6 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
         appContext = getApplicationContext();
     }
 }

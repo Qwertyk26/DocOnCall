@@ -11,6 +11,7 @@ import java.util.List;
 import ru.handh.doctor.ui.main.MainActivity;
 import ru.handh.doctor.utils.GeofenceErrorMessages;
 import ru.handh.doctor.utils.Log;
+import ru.handh.doctor.utils.Log4jHelper;
 
 /**
  * Created by sergey on 27.01.16.
@@ -19,19 +20,19 @@ import ru.handh.doctor.utils.Log;
 public class ReceiveTransitionsIntentService extends IntentService {
 
     public static final String TRANSITION_INTENT_SERVICE = "ReceiveTransitionsIntentService";
-
+    org.apache.log4j.Logger log;
     public ReceiveTransitionsIntentService() {
         super(TRANSITION_INTENT_SERVICE);
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-
+        log = Log4jHelper.getLogger(TRANSITION_INTENT_SERVICE);
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
             String errorMessage = GeofenceErrorMessages.getErrorString(this,
                     geofencingEvent.getErrorCode());
-            Log.d(TRANSITION_INTENT_SERVICE, errorMessage);
+            log.error(TRANSITION_INTENT_SERVICE + errorMessage);
             return;
         }
 
@@ -52,7 +53,7 @@ public class ReceiveTransitionsIntentService extends IntentService {
 //            Log.d(TRANSITION_INTENT_SERVICE, geofenceTransitionDetails);
             intersectionCircle(Integer.valueOf(triggeringGeofences.get(0).getRequestId()));
         } else {
-            Log.d(TRANSITION_INTENT_SERVICE, getString(R.string.geofence_transition_invalid_type, geofenceTransition));
+            log.debug(TRANSITION_INTENT_SERVICE + getString(R.string.geofence_transition_invalid_type, geofenceTransition));
         }
 
 

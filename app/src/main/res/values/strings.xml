@@ -16,10 +16,12 @@
     <string name="simpleName">Георгий Кругликов</string>
     <string name="imageDoc">imageDoc</string>
     <string name="calls">Вызовы</string>
+    <string name="messages">Сообщения</string>
     <string name="history">История вызовов</string>
     <string name="settings">Профиль</string>
     <string name="about">О приложении</string>
     <string name="exit">Выход</string>
+    <string name="chats">Чаты</string>
 
     <string name="dialog_title">О приложении</string>
     <string name="dialog_title_new">Что нового</string>
@@ -91,6 +93,7 @@
     <string name="offline">Не в сети</string>
     <string name="emptyCalls">У Вас нет ни одной активной заявки</string>
     <string name="emptyHistory">История вызовов пуста</string>
+    <string name="emptyChats">У Вас нет ни одного чата</string>
     <string name="dateCange">Данные успешно изменены</string>
 
 
@@ -128,4 +131,7 @@
     <string name="delete_action">Удалить</string>
     <string name="upload_error">Во время загрузки файлов произошла ошибка</string>
     <string name="error_image_delete">Фотографию невозможно удалить: она уже загружена на сервер</string>
+    <string name="send_report">Сообщить об ошибке</string>
+    <string name="email_subject">Логи приложения от %1$s</string>
+    <string name="email_body">Логин: %1$s\nМодель: %2$s\nОС: %3$s\nВерсия приложения: %4$s</string>
 </resources>

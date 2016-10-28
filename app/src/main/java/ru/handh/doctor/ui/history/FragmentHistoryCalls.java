@@ -25,6 +25,7 @@ import ru.handh.doctor.ui.ParentFragment;
 import ru.handh.doctor.ui.main.CallsOnResponce;
 import ru.handh.doctor.ui.main.MainActivity;
 import ru.handh.doctor.utils.Constants;
+import ru.handh.doctor.utils.Log4jHelper;
 import ru.handh.doctor.utils.Utils;
 
 /**
@@ -39,6 +40,7 @@ public class FragmentHistoryCalls extends ParentFragment implements CallsOnRespo
     private SwipeRefreshLayout swipeLayout;
     private ArrayList<DataCall> historyList;
     private TextView emptyView;
+    org.apache.log4j.Logger log;
 
     public FragmentHistoryCalls() {
     }
@@ -68,11 +70,12 @@ public class FragmentHistoryCalls extends ParentFragment implements CallsOnRespo
 
         reqForCalls = new ReqForCalls();
 
-
+        log = Log4jHelper.getLogger(FRAGMENT_TAG);
         v.findViewById(R.id.button_reqError).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 reqForCalls.callsReq(Constants.REQ_CALLS_HISTORY, FragmentHistoryCalls.this, getActivity());
+                log.info(FRAGMENT_TAG + " error button clicked");
             }
         });
 
@@ -80,6 +83,7 @@ public class FragmentHistoryCalls extends ParentFragment implements CallsOnRespo
             @Override
             public void onRefresh() {
                 reqForCalls.callsReq(Constants.REQ_CALLS_HISTORY, FragmentHistoryCalls.this, getActivity());
+                log.info(FRAGMENT_TAG + " swipe swiped");
             }
         });
 

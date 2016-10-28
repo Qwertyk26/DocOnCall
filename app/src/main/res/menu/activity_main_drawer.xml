@@ -7,6 +7,10 @@
             android:icon="@android:drawable/ic_menu_camera"
             android:title="Вызовы" />
         <item
+            android:id="@+id/nav_chars"
+            android:icon="@android:drawable/ic_menu_call"
+            android:title="Сообщения" />
+        <item
             android:id="@+id/nav_history_calls"
             android:icon="@android:drawable/ic_menu_gallery"
             android:title="История вызовов" />

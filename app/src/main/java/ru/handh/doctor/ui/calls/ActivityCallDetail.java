@@ -56,7 +56,7 @@ public class ActivityCallDetail extends AppCompatActivity {
             FragmentCallDetail.newInstance(call, isHaveSelect, new FragmentCallDetail.InstanceCreatedCallback() {
                 @Override
                 public void onUpdate(FragmentCallDetail fragment) {
-                    getSupportFragmentManager().beginTransaction().replace(R.id.item_detail_container, fragment).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.item_detail_container, fragment).commitAllowingStateLoss();
                 }
             });
         }

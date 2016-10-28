@@ -76,7 +76,7 @@ public class AdapterHistory extends RecyclerView.Adapter<AdapterHistory.ViewHold
 
     @Override
     public int getItemCount() {
-        return records.size();
+        return records == null ? 0 : records.size();
     }
 
     private boolean isShowDayTitle(int position, TextView tv) {

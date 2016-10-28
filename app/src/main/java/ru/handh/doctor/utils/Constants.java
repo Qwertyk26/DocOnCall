@@ -33,6 +33,8 @@ public class Constants {
 
     public final static float MIN_DISTANCE_TO_CLIENT = 1000;
     public final static String EXTRAS_PUSH = "newCalls";
+    public final static int MAX_BACKUP_FILE = 1;
+    public final static long MAX_FILE_SIZE = 1024 * 1024;
 
     public final static int NURSE_ID = 2138;
     public final static int MAX_NURSE_PHOTO_COUNT = 5; //0 - неограничено
@@ -42,6 +44,10 @@ public class Constants {
     public static final String SHARED_PREFERENCES_NAME = PACKAGE_NAME + ".SHARED_PREFERENCES_NAME";
 
     public static final String GEOFENCES_ADDED_KEY = PACKAGE_NAME + ".GEOFENCES_ADDED_KEY";
+
+    public static final String EMAIL_TO_SEND_REPORT = "doctor_android@doconcall.ru";
+    public static int DEFAULT_TIMEOUT = 60;
+    public static int UPLOAD_FILE_TIME_OUT = 3600;
 
     /**
      * Used to set an expiration time for a geofence. After this amount of time Location Services

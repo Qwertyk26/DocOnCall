@@ -10,17 +10,23 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringDef;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,17 +46,22 @@ import com.littlefluffytoys.littlefluffylocationlibrary.LocationInfo;
 
 import net.hockeyapp.android.UpdateManager;
 
+import org.apache.log4j.chainsaw.Main;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import retrofit.Call;
@@ -65,6 +76,8 @@ import ru.handh.doctor.ParentActivity;
 import ru.handh.doctor.R;
 import ru.handh.doctor.event.SessionButtonVisibilityEvent;
 import ru.handh.doctor.event.SessionDurationEvent;
+import ru.handh.doctor.event.ShowHideProgressEvent;
+import ru.handh.doctor.event.TakePhotoCommandEvent;
 import ru.handh.doctor.io.db.DBWork;
 import ru.handh.doctor.io.network.ApiInstance;
 import ru.handh.doctor.io.network.ReqForCalls;
@@ -87,16 +100,18 @@ import ru.handh.doctor.model.SessionStartPost;
 import ru.handh.doctor.ui.FragmentSettings;
 import ru.handh.doctor.ui.calls.FragmentCallDetail;
 import ru.handh.doctor.ui.calls.FragmentCallsStart;
+import ru.handh.doctor.ui.chats.FragmentChats;
 import ru.handh.doctor.ui.dialog.SessionDurationDialogFragment;
 import ru.handh.doctor.ui.history.FragmentHistoryCalls;
 import ru.handh.doctor.utils.Constants;
 import ru.handh.doctor.utils.Log;
+import ru.handh.doctor.utils.Log4jHelper;
 import ru.handh.doctor.utils.SharedPref;
 import ru.handh.doctor.utils.Utils;
 
 public class MainActivity extends ParentActivity implements CallsOnResponce {
 
-
+    public final static String TAG = "MainActivity";
     public static final HashMap<String, String> letterColors = new HashMap<>();
     public final static String PARAM_LOCATION = "location";
     public final static int STATUS_CHANGE_STATUS = 300;
@@ -116,11 +131,11 @@ public class MainActivity extends ParentActivity implements CallsOnResponce {
     public DrawerLayout drawer;
     public boolean isFirst = true, isStartScreens = true;
     //public SwipeRefreshLayout swipeLayoutNewCalls;
-    public RestApi restApi = ApiInstance.restApi;
+    public RestApi restApi = ApiInstance.defaultService(RestApi.class);
 
     private boolean doubleBackToExitPressedOnce = false;
     private String menuTag, title;
-    private TextView menuCalls, menuHistory, menuSettings, menuAbout, menuHeaderName;//, emptyRightMenu;
+    private TextView menuCalls, menuHistory, menuSettings, menuAbout, menuHeaderName, menuChats;//, emptyRightMenu;
     private ImageView photoMenu;
     private ProgressBar toolbarProgressBar;
     private ProgressBar uploadProgressBar;
@@ -140,6 +155,9 @@ public class MainActivity extends ParentActivity implements CallsOnResponce {
     //private AdapterRightMenu adapterRightMenu;
     private ReqForCalls reqForCalls;
     private BroadcastReceiver br;
+    org.apache.log4j.Logger log;
+    String[] filesString;
+
     private View.OnClickListener menuClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -150,28 +168,38 @@ public class MainActivity extends ParentActivity implements CallsOnResponce {
                     transaction.beginTransaction()
                             .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in,
                                     android.R.anim.fade_out)
-                            .replace(R.id.container, FragmentCallsStart.newInstance(), FragmentCallsStart.FRAGMENT_TAG).commit();
+                            .replace(R.id.container, FragmentCallsStart.newInstance(), FragmentCallsStart.FRAGMENT_TAG).commitAllowingStateLoss();
+                    log.info(TAG + " menu calls clicked");
                     break;
                 case R.id.menuHistory_tv:
                     transaction.beginTransaction()
                             .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in,
                                     android.R.anim.fade_out)
-                            .replace(R.id.container, FragmentHistoryCalls.newInstance(), FragmentHistoryCalls.FRAGMENT_TAG).commit();
+                            .replace(R.id.container, FragmentHistoryCalls.newInstance(), FragmentHistoryCalls.FRAGMENT_TAG).commitAllowingStateLoss();
+                    log.info(TAG + " menu history clicked");
+                    break;
+                case R.id.menuChats_tv:
+                    transaction.beginTransaction()
+                            .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in,
+                            android.R.anim.fade_out).replace(R.id.container, FragmentChats.newInstance(), FragmentChats.FRAGMENT_TAG).commitAllowingStateLoss();
+                    log.info(TAG + " menu chats clicked");
                     break;
                 case R.id.menuSettings_tv:
                     transaction.beginTransaction()
                             .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out, android.R.anim.fade_in,
                                     android.R.anim.fade_out)
-                            .replace(R.id.container, FragmentSettings.newInstance(), FragmentSettings.FRAGMENT_TAG).commit();
+                            .replace(R.id.container, FragmentSettings.newInstance(), FragmentSettings.FRAGMENT_TAG).commitAllowingStateLoss();
+                    log.info(TAG + " menu setting clicked");
                     break;
                 case R.id.menuAbout_tv:
                     if(!isAboutDialogShown()) {
                         aboutDialogTitle.setText(R.string.dialog_title);
+                        log.info(TAG + " menu about clicked");
                         aboutDialog.show();
                     }
                     break;
                 case R.id.menuLogout_tv:
-
+                    log.info(TAG + " menu logout clicked");
                     final NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
                     notificationManager.cancel(0);
                     logoutReq();
@@ -186,7 +214,7 @@ public class MainActivity extends ParentActivity implements CallsOnResponce {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        log = Log4jHelper.getLogger(TAG);
         setColorForIcons();
 
         locationDialog = Utils.showLocationDialog(this, true);
@@ -220,6 +248,7 @@ public class MainActivity extends ParentActivity implements CallsOnResponce {
         menuHistory = (TextView) findViewById(R.id.menuHistory_tv);
         menuSettings = (TextView) findViewById(R.id.menuSettings_tv);
         menuAbout = (TextView) findViewById(R.id.menuAbout_tv);
+        menuChats = (TextView) findViewById(R.id.menuChats_tv);
         TextView menuLogout = (TextView) findViewById(R.id.menuLogout_tv);
 
         final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -242,6 +271,7 @@ public class MainActivity extends ParentActivity implements CallsOnResponce {
 
 
         menuCalls.setOnClickListener(menuClick);
+        menuChats.setOnClickListener(menuClick);
         menuHistory.setOnClickListener(menuClick);
         menuSettings.setOnClickListener(menuClick);
         menuAbout.setOnClickListener(menuClick);
@@ -352,6 +382,7 @@ public class MainActivity extends ParentActivity implements CallsOnResponce {
         UpdateManager.register(this);
 
         //showEmptyNew();
+        EventBus.getDefault().register(this);
     }
 
     private void loadConfig() {
@@ -379,6 +410,7 @@ public class MainActivity extends ParentActivity implements CallsOnResponce {
         sessionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                log.info(TAG + " session button clicked");
                 if(MyApplication.isSessionOpened) {
                     final AlertDialog dialog = new AlertDialog.Builder(MainActivity.this)
                             .setTitle("Завершение рабочей смены")
@@ -387,12 +419,14 @@ public class MainActivity extends ParentActivity implements CallsOnResponce {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     finishSession(false);
+                                    log.info(TAG + " session dialog dismiss clicked");
                                     dialog.dismiss();
                                 }
                             })
                             .setNegativeButton("Нет", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    log.info(TAG + " session dialog dismiss clicked");
                                     dialog.dismiss();
                                 }
                             })
@@ -416,6 +450,7 @@ public class MainActivity extends ParentActivity implements CallsOnResponce {
                                 public void onClick(DialogInterface dialog, int which) {
                                     if(dbWork.isHourly()) {
                                         showSessionDurationDialog();
+                                        log.info(TAG + " session start clicked");
                                     } else {
                                         startSession(0);
                                     }
@@ -426,6 +461,7 @@ public class MainActivity extends ParentActivity implements CallsOnResponce {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
+                                    log.info(TAG + " session dismiss clicked");
                                 }
                             })
                             .create();
@@ -499,13 +535,16 @@ public class MainActivity extends ParentActivity implements CallsOnResponce {
                     showSessionDurationDialog();
                 } else {
                     Toast.makeText(this, "Ошибка 4048", Toast.LENGTH_SHORT).show();
+                    log.info(TAG + " session error 4048");
                 }
                 break;
             case 4049:
                 Toast.makeText(this, "Смена уже открыта", Toast.LENGTH_SHORT).show();
+                log.info(TAG + " session error 4049");
                 changeSessionState(true);
                 break;
             case 4050:
+                log.info(TAG + " session error 4050");
                 Toast.makeText(this, "Нет открытых смен", Toast.LENGTH_SHORT).show();
                 changeSessionState(false);
                 break;
@@ -560,6 +599,7 @@ public class MainActivity extends ParentActivity implements CallsOnResponce {
     private void showSessionDurationDialog() {
         final DialogFragment dialogFragment = new SessionDurationDialogFragment();
         dialogFragment.show(getSupportFragmentManager(), SessionDurationDialogFragment.class.getName());
+        log.info(TAG + " showSessionDurationDialog");
     }
 
     public void showDialog(String text) {
@@ -616,6 +656,7 @@ public class MainActivity extends ParentActivity implements CallsOnResponce {
             @Override
             public void onClick(View v) {
                 drawer.openDrawer(GravityCompat.START);
+                log.info(TAG + " drawer menu clicked");
             }
         });
     }
@@ -724,33 +765,45 @@ public class MainActivity extends ParentActivity implements CallsOnResponce {
                 menuCalls.setBackgroundResource(R.drawable.selected_background);
                 menuHistory.setBackgroundResource(R.drawable.click_background);
                 menuSettings.setBackgroundResource(R.drawable.click_background);
-
+                menuChats.setBackgroundResource(R.drawable.click_background);
+                break;
+            case FragmentChats.FRAGMENT_TAG:
+                menuCalls.setBackgroundResource(R.drawable.click_background);
+                menuHistory.setBackgroundResource(R.drawable.click_background);
+                menuSettings.setBackgroundResource(R.drawable.click_background);
+                menuChats.setBackgroundResource(R.drawable.selected_background);
                 break;
             case FragmentHistoryCalls.FRAGMENT_TAG:
                 menuCalls.setBackgroundResource(R.drawable.click_background);
                 menuHistory.setBackgroundResource(R.drawable.selected_background);
                 menuSettings.setBackgroundResource(R.drawable.click_background);
-
+                menuChats.setBackgroundResource(R.drawable.click_background);
                 break;
             case FragmentSettings.FRAGMENT_TAG:
                 menuCalls.setBackgroundResource(R.drawable.click_background);
                 menuHistory.setBackgroundResource(R.drawable.click_background);
                 menuSettings.setBackgroundResource(R.drawable.selected_background);
-
+                menuChats.setBackgroundResource(R.drawable.click_background);
                 break;
             case FragmentCallDetail.FRAGMENT_TAG:
-
                 drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, GravityCompat.START);
                 break;
         }
     }
-
-    public void showUploadProgress() {
-        uploadProgressBar.setVisibility(View.VISIBLE);
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(ShowHideProgressEvent e) {
+        if (e.getCommand() == "SHOW") {
+            uploadProgressBar.setVisibility(View.VISIBLE);
+        } else if (e.getCommand() == "HIDE") {
+            uploadProgressBar.setVisibility(View.GONE);
+        }
     }
-    public void hideUploadProgress() {
-        uploadProgressBar.setVisibility(View.GONE);
-    }
+//    public void showUploadProgress() {
+//        uploadProgressBar.setVisibility(View.VISIBLE);
+//    }
+//    public void hideUploadProgress() {
+//        uploadProgressBar.setVisibility(View.GONE);
+//    }
     private void changeIconEmpty() {
 //        if (applications.size() == 0) {
 //            //emptyRightMenu.setVisibility(View.VISIBLE);
@@ -766,17 +819,39 @@ public class MainActivity extends ParentActivity implements CallsOnResponce {
     private boolean isAboutDialogShown()
     {
         if(aboutDialog == null) {
+            log.info(TAG + " about dialog showing ");
             aboutDialog = new AlertDialog.Builder(this).create();
             View view = getLayoutInflater().inflate(R.layout.about_view, null);
             aboutDialogTitle = (TextView) view.findViewById(R.id.aboutDialogTitle);
             TextView versionTextView = (TextView) view.findViewById(R.id.versionText);
             WebView webView = (WebView) view.findViewById(R.id.aboutWebView);
             Button okButton = (Button) view.findViewById(R.id.ok_button);
+            Button sendReport = (Button) view.findViewById(R.id.sendReport);
 
             okButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     aboutDialog.dismiss();
+                }
+            });
+            sendReport.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String path = Environment.getExternalStorageDirectory().toString() + "/logs";
+                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss",
+                            Locale.getDefault()).format(new Date());
+                    File attachmentFile = Utils.zipFolder(path, Environment.getExternalStorageDirectory().toString() + "/" + timeStamp + "_doc_logs.zip");
+                    Intent emailIntent = new Intent(Intent.ACTION_SEND);
+                    emailIntent.setType("text/plain");
+                    String emailSubjectDate = new SimpleDateFormat("dd.MM.yyyy",
+                            Locale.getDefault()).format(new Date());
+                    emailIntent.putExtra(Intent.EXTRA_EMAIL  , new String[]{Constants.EMAIL_TO_SEND_REPORT});
+                    emailIntent.putExtra(Intent.EXTRA_SUBJECT, String.format(getString(R.string.email_subject), emailSubjectDate));
+                    emailIntent.putExtra(Intent.EXTRA_TEXT, String.format(getString(R.string.email_body), SharedPref.getLogin(MainActivity.this), Build.MODEL, Build.VERSION.RELEASE, SharedPref.getAppVersion(MainActivity.this)));
+                    Uri fileUri = FileProvider.getUriForFile(MainActivity.this, "ru.handh.doctor.provider", attachmentFile);
+                    emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    emailIntent.putExtra(Intent.EXTRA_STREAM, fileUri);
+                    startActivity(Intent.createChooser(emailIntent, "Send Email"));
                 }
             });
 
@@ -1160,7 +1235,7 @@ public class MainActivity extends ParentActivity implements CallsOnResponce {
      * запрос на получение статуса смены
      */
     private void getSessionStatus() {
-        Call<ModelSessionStatus> call = ApiInstance.restApi.getSessionStatus(SharedPref.getTokenApp(MainActivity.this), SharedPref.getTokenUser(MainActivity.this));
+        Call<ModelSessionStatus> call = ApiInstance.defaultService(RestApi.class).getSessionStatus(SharedPref.getTokenApp(MainActivity.this), SharedPref.getTokenUser(MainActivity.this));
         call.enqueue(new Callback<ModelSessionStatus>() {
             @Override
             public void onResponse(Response<ModelSessionStatus> response, Retrofit retrofit) {
@@ -1180,5 +1255,10 @@ public class MainActivity extends ParentActivity implements CallsOnResponce {
             }
         });
     }
-
+    public void showUploadProgress() {
+        uploadProgressBar.setVisibility(View.VISIBLE);
+    }
+    public void hideUploadProgress() {
+        uploadProgressBar.setVisibility(View.GONE);
+    }
 }

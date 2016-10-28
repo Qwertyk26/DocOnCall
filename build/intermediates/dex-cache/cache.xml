@@ -30,6 +30,15 @@
     </item>
     <item
         is-multidex="false"
+        jar="/Users/antonnikitin/Git/DOC Android/app/build/intermediates/exploded-aar/com.android.support/cardview-v7/23.4.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.2"
+        sha1="d9ecde39b460470e655de6e47c05573d2d5a8bfb">
+        <dex dex="/Users/antonnikitin/Git/DOC Android/app/build/intermediates/pre-dexed/beta/com.android.support-cardview-v7-23.4.0_4fe0d9dc50fca0bd04af7e9e96550d3258bea210.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="/Users/antonnikitin/.gradle/caches/modules-2/files-2.1/org.jsoup/jsoup/1.8.3/65fd012581ded67bc20945d85c32b4598c3a9cf1/jsoup-1.8.3.jar"
         jumboMode="false"
         optimize="true"
@@ -63,6 +72,15 @@
         revision="24.0.2"
         sha1="345a1b5cf5b144ce18ba6962bc66a7e2f26c1c1b">
         <dex dex="/Users/antonnikitin/Git/DOC Android/app/build/intermediates/pre-dexed/beta/com.google.android.gms-play-services-basement-8.3.0_e0bfe6f604d18c830feb3c186e8f36971b854ee7.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/antonnikitin/Git/DOC Android/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-appindexing/8.3.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.2"
+        sha1="0c3e81d3eb86b86d194b5cdb6a4de78203f6f7fd">
+        <dex dex="/Users/antonnikitin/Git/DOC Android/app/build/intermediates/pre-dexed/beta/com.google.android.gms-play-services-appindexing-8.3.0_8e5bebe8ad7bb395b3f7915ec865d1d74f894e3f.jar" />
     </item>
     <item
         is-multidex="false"
@@ -117,6 +135,15 @@
         revision="24.0.2"
         sha1="42e5f69edd03ac35f7fb93fad004ee6e45657f36">
         <dex dex="/Users/antonnikitin/Git/DOC Android/app/build/intermediates/pre-dexed/beta/joda-time-2.9.4-no-tzdb_3405b29cab532a4aa7da92a0bff6567eca1aa074.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/antonnikitin/Git/DOC Android/app/libs/log4j-1.2.17.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.2"
+        sha1="4f90475694c41965c9a0c8bac53ea5c690dea446">
+        <dex dex="/Users/antonnikitin/Git/DOC Android/app/build/intermediates/pre-dexed/beta/log4j-1.2.17_f73de72ab1ea2015ec454a084add04cbfa8488fc.jar" />
     </item>
     <item
         is-multidex="false"
@@ -183,6 +210,15 @@
     </item>
     <item
         is-multidex="false"
+        jar="/Users/antonnikitin/.gradle/caches/modules-2/files-2.1/org.parceler/parceler-api/1.0.3/2b2ec1a0bd113f0ff48151da83d2209ef64ce907/parceler-api-1.0.3.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.2"
+        sha1="2b2ec1a0bd113f0ff48151da83d2209ef64ce907">
+        <dex dex="/Users/antonnikitin/Git/DOC Android/app/build/intermediates/pre-dexed/beta/parceler-api-1.0.3_7f7071564d530f9149ce90ad8b10e1a02cb7b914.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="/Users/antonnikitin/.gradle/caches/modules-2/files-2.1/com.squareup.okhttp3/okhttp/3.2.0/f7873a2ebde246a45c2a8d6f3247108b4c88a879/okhttp-3.2.0.jar"
         jumboMode="false"
         optimize="true"
@@ -228,6 +264,15 @@
     </item>
     <item
         is-multidex="false"
+        jar="/Users/antonnikitin/Git/DOC Android/app/libs/android-logging-log4j-1.0.3.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.2"
+        sha1="bee823e6955d3a5806700026f838ebbca907ac7a">
+        <dex dex="/Users/antonnikitin/Git/DOC Android/app/build/intermediates/pre-dexed/beta/android-logging-log4j-1.0.3_11cfe90a68bbcbfed0697bdaf0b84ec5c437b21a.jar" />
+    </item>
+    <item
+        is-multidex="false"
         jar="/Users/antonnikitin/Git/DOC Android/app/build/intermediates/exploded-aar/com.google.android.gms/play-services-location/8.3.0/jars/classes.jar"
         jumboMode="false"
         optimize="true"
@@ -243,6 +288,15 @@
         revision="24.0.2"
         sha1="77f9593d979f4347344be233bd0d888315f79517">
         <dex dex="/Users/antonnikitin/Git/DOC Android/app/build/intermediates/pre-dexed/beta/com.google.android.gms-play-services-maps-8.3.0_38ae9ab6ccaf3eeb6f2965382f3beb64ca6ea40c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="/Users/antonnikitin/Git/DOC Android/app/build/intermediates/exploded-aar/com.commonsware.cwac/camera/0.7.0/jars/classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="24.0.2"
+        sha1="3c52496d5177b4f45994244bc954babd31d7d24c">
+        <dex dex="/Users/antonnikitin/Git/DOC Android/app/build/intermediates/pre-dexed/beta/com.commonsware.cwac-camera-0.7.0_7e71dd0e468c9c286474e2baec9c02c5046883ca.jar" />
     </item>
     <item
         is-multidex="false"

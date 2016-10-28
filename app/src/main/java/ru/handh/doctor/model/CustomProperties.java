@@ -3,6 +3,8 @@ package ru.handh.doctor.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+
+
 /**
  * Created by samsonov on 09.08.2016.
  */

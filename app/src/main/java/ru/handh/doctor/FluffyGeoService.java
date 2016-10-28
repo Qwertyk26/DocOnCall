@@ -38,6 +38,7 @@ import ru.handh.doctor.io.network.send.CoordinatesSend;
 import ru.handh.doctor.ui.main.MainActivity;
 import ru.handh.doctor.utils.Constants;
 import ru.handh.doctor.utils.Log;
+import ru.handh.doctor.utils.Log4jHelper;
 import ru.handh.doctor.utils.SharedPref;
 
 /**
@@ -45,6 +46,7 @@ import ru.handh.doctor.utils.SharedPref;
  */
 public class FluffyGeoService extends Service {
 
+    public final static String TAG = "FluffyGeoService";
     private static final float MIN_DISTANCE_TO_SEND = 100;
     private static final long THREAD_STEP = 500;
 
@@ -59,6 +61,7 @@ public class FluffyGeoService extends Service {
 
     private boolean destroyed = false;
     private boolean forceSendCords = false;
+    org.apache.log4j.Logger log;
 
     @Nullable
     @Override
@@ -68,13 +71,7 @@ public class FluffyGeoService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-//        Retrofit retrofit = new Retrofit.Builder()
-//                .baseUrl(Constants.API_URL)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//
-//        restApi = retrofit.create(RestApi.class);
-
+        log = Log4jHelper.getLogger(TAG);
         final IntentFilter lftIntentFilter = new IntentFilter(LocationLibraryConstants.getLocationChangedPeriodicBroadcastAction());
         registerReceiver(lftBroadcastReceiver, lftIntentFilter);
 
@@ -122,22 +119,22 @@ public class FluffyGeoService extends Service {
      * отправка координат
      */
     private void sendCoordinates(LocationInfo locationInfo) {
-        Log.d("координаты lat: " + locationInfo.lastLat + ", lon: " + locationInfo.lastLong);
+        log.info(TAG + " координаты lat: " + locationInfo.lastLat + ", lon: " + locationInfo.lastLong);
         CoordinatesSend coordSend = new CoordinatesSend(locationInfo.lastLat, locationInfo.lastLong, this);
 
-        Call<ModelCoordinates> call = ApiInstance.restApi.getCoordinates(SharedPref.getTokenApp(this), coordSend);
+        Call<ModelCoordinates> call = ApiInstance.defaultService(RestApi.class).getCoordinates(SharedPref.getTokenApp(this), coordSend);
         call.enqueue(new Callback<ModelCoordinates>() {
             @Override
             public void onResponse(Response<ModelCoordinates> response, Retrofit retrofit) {
                 if (response.code() == HttpURLConnection.HTTP_OK) {
-                    Log.d("координаты отправлены");
+                    log.info(TAG + " координаты отправлены");
                 } else {
                     if (!response.isSuccess() && response.errorBody() != null) {
                         Converter<ResponseBody, ModelErrors> errorConverter =
                                 retrofit.responseConverter(ModelErrors.class, new Annotation[0]);
                         try {
                             ModelErrors error = errorConverter.convert(response.errorBody());
-                            Log.d("координаты не отправлены: " + error == null ? "" : error.toString());
+                            log.error(TAG + " координаты не отправлены: " + error == null ? "" : error.toString());
 
                         } catch (Exception e) {
                             if (e instanceof IOException) {
@@ -150,7 +147,7 @@ public class FluffyGeoService extends Service {
 
             @Override
             public void onFailure(Throwable t) {
-                Log.d("координаты не отправлены ошибка сети");
+                log.error(TAG + " координаты не отправлены ошибка сети");
             }
         });
     }
@@ -168,7 +165,7 @@ public class FluffyGeoService extends Service {
             previousSentLocation = locationInfo;
         }
 
-        Log.d("местоположение обновлено");
+        log.info(TAG + " местоположение обновлено");
         updateCoordinatesInMain(locationInfo);
     }
 

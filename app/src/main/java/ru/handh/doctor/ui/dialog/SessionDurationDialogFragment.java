@@ -18,21 +18,23 @@ import org.greenrobot.eventbus.EventBus;
 
 import ru.handh.doctor.R;
 import ru.handh.doctor.event.SessionDurationEvent;
+import ru.handh.doctor.utils.Log4jHelper;
 import ru.handh.doctor.utils.Utils;
 
 /**
  * Created by hugochaves on 29.08.2016.
  */
 public class SessionDurationDialogFragment extends DialogFragment {
+    public final static String TAG = "SessionDurationDialogFragment";
     public static final int[] DURATIONS = {2, 4, 6, 8, 10, 12, 14};
     private static int SESSION_DIALOG_MAX_WIDTH = 350;
-
+    org.apache.log4j.Logger log;
     private RadioGroup radioGroup;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
+        log = Log4jHelper.getLogger(TAG);
         SESSION_DIALOG_MAX_WIDTH = (int) Utils.pxFromDp(getContext(), 350);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -67,6 +69,7 @@ public class SessionDurationDialogFragment extends DialogFragment {
                     }
                 })
                 .setView(rootView);
+        log.info(TAG + " created");
 
         return builder.create();
     }

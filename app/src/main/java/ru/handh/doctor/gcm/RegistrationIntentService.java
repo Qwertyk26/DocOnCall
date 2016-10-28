@@ -14,6 +14,7 @@ import java.io.IOException;
 
 import ru.handh.doctor.R;
 import ru.handh.doctor.utils.Log;
+import ru.handh.doctor.utils.Log4jHelper;
 
 /**
  * Created by sgirn on 25.11.2015.
@@ -23,13 +24,14 @@ public class RegistrationIntentService extends IntentService {
 
     private static final String TAG = "RegIntentService";
     private static final String[] TOPICS = {"global"};
-
+    org.apache.log4j.Logger log;
     public RegistrationIntentService() {
         super(TAG);
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        log = Log4jHelper.getLogger(TAG);
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         try {
@@ -43,7 +45,7 @@ public class RegistrationIntentService extends IntentService {
             String token = instanceID.getToken(getString(R.string.gcm_defaultSenderId),
                     GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
             // [END get_token]
-            Log.d(TAG, "GCM Registration Token: " + token);
+            log.info("GCM Registration Token: " + token);
             // Subscribe to topic channels
             subscribeTopics(token);
 
@@ -54,7 +56,7 @@ public class RegistrationIntentService extends IntentService {
             sharedPreferences.edit().putString(QuickstartPreferences.STRING_TOKEN_TO_SERVER, token).apply();
             // [END register_for_gcm]
         } catch (Exception e) {
-            Log.d(TAG, "Failed to complete token refresh", e);
+            log.info(String.format("Failed to complete token refresh", e));
             // If an exception happens while fetching the new token or updating our registration data
             // on a third-party server, this ensures that we'll attempt the update at a later time.
             sharedPreferences.edit().putString(QuickstartPreferences.STRING_TOKEN_TO_SERVER, "").apply();

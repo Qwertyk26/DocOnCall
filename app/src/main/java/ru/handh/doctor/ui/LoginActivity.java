@@ -38,6 +38,7 @@ import ru.handh.doctor.io.network.send.AuthSend;
 import ru.handh.doctor.io.network.send.DoctorSend;
 import ru.handh.doctor.ui.main.MainActivity;
 import ru.handh.doctor.utils.Constants;
+import ru.handh.doctor.utils.Log4jHelper;
 import ru.handh.doctor.utils.SharedPref;
 import ru.handh.doctor.utils.Utils;
 
@@ -46,7 +47,7 @@ import ru.handh.doctor.utils.Utils;
  * экран авторизации
  */
 public class LoginActivity extends ParentActivity {
-
+    public final static String TAG = "LoginActivity";
     static final String STATE_GCM = "gcmToken";
     static final String STATE_APP_TOKEN = "appTOken";
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -56,9 +57,10 @@ public class LoginActivity extends ParentActivity {
     private int numberReq;
     private EditText login, password;
     private String appToken;
-    private RestApi restApi = ApiInstance.restApi;
+    private RestApi restApi = ApiInstance.defaultService(RestApi.class);
     private String tokenGCM = "";
     private DBWork dbWork;
+    org.apache.log4j.Logger log;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -82,7 +84,7 @@ public class LoginActivity extends ParentActivity {
         enter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                log.info(TAG + " enter button clicked");
                 if (login.getText().toString().isEmpty()) {
                     login.setError(getString(R.string.writeLogin));
                     return;
@@ -92,8 +94,6 @@ public class LoginActivity extends ParentActivity {
                     return;
                 }
 
-
-                // загрузка токена приложения
                 loadDoctorData(login.getText().toString(), password.getText().toString());
             }
         });
@@ -101,6 +101,7 @@ public class LoginActivity extends ParentActivity {
         errorButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                log.info(TAG + " error button clicked");
                 if (numberReq == REQ_TOKEN) {
                     loadTokenApp(false);
                 } else if (numberReq == REQ_DOC_DATA) {
@@ -133,6 +134,7 @@ public class LoginActivity extends ParentActivity {
 
             showData();
         }
+        log = Log4jHelper.getLogger(TAG);
     }
 
     @Override
@@ -221,7 +223,6 @@ public class LoginActivity extends ParentActivity {
                     appToken = response.body().data.getToken();
 
                     SharedPref.setTokenApp(appToken, LoginActivity.this);
-
                     if (isBadToken) {
 
                         setTokenGCM(LoginActivity.this);

@@ -13,6 +13,7 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -56,9 +57,9 @@ public class AdapterNurseImages extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Image bitmap = bitmaps.get(position);
-        Uri uri = Uri.parse(bitmap.getPath());
-        ((ViewHolder) holder).nurseImage.setImageURI(uri);
+        File file = new File(bitmaps.get(position).getPath());
+        Bitmap bitmap = decodeBitmapFromFile(file);
+        ((ViewHolder) holder).nurseImage.setImageBitmap(bitmap);
     }
 
     @Override
@@ -72,5 +73,33 @@ public class AdapterNurseImages extends RecyclerView.Adapter<RecyclerView.ViewHo
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
+    }
+    public static int calculateInSampleSize(BitmapFactory.Options options,
+                                            int reqWidth, int reqHeight) {
+
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            while ((halfHeight / inSampleSize) > reqHeight
+                    && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+        return inSampleSize;
+    }
+    public Bitmap decodeBitmapFromFile(File imageFile) {
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(imageFile.getAbsolutePath(), bmOptions);
+        bmOptions.inSampleSize = calculateInSampleSize(bmOptions, 200, 200);
+        bmOptions.inPreferredConfig = Bitmap.Config.RGB_565;
+        bmOptions.inJustDecodeBounds = false;
+        return BitmapFactory.decodeFile(imageFile.getAbsolutePath(), bmOptions);
     }
 }

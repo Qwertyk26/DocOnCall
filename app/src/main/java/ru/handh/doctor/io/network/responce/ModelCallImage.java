@@ -20,7 +20,6 @@ public class ModelCallImage extends ParentModel {
             this.id = id;
         }
 
-
         public String getImage() {
             return image;
         }

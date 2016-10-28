@@ -6,14 +6,18 @@ import android.os.Parcelable;
 import java.util.List;
 import java.util.Set;
 
+import io.realm.annotations.PrimaryKey;
+
 /**
  * Created by samsonov on 02.08.2016.
  */
 public class Reference implements Parcelable {
+    @PrimaryKey
     private int id;
     private String value;
     private int sort;
     private boolean active;
+
     private CustomProperties customProperties;
 
     public int getId() {
@@ -95,5 +99,4 @@ public class Reference implements Parcelable {
         this.active = in.readByte() != 0;
         this.customProperties = in.readParcelable(CustomProperties.class.getClassLoader());
     }
-
 }
